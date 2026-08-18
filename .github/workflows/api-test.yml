@@ -1,0 +1,46 @@
+name: API Automation Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Newman and HTMLExtra Reporter
+      run: npm install -g newman newman-reporter-htmlextra
+
+    - name: Start EShop Backend Server
+      run: |
+        npm install
+        npm start &
+        sleep 5
+      working-directory: ./backend
+
+    - name: Run API Tests via Newman
+      run: |
+        mkdir -p reports
+        npx newman run postman/ESHOP_Collection.json \
+          -e postman/ESHOP_Environment.json \
+          --reporters cli,htmlextra \
+          --reporter-htmlextra-export ./reports/API_TestReport.html \
+          --delay-request 100 \
+          --bail
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: API_TestReport
+        path: ./reports/API_TestReport.html
