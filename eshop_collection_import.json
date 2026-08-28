@@ -1,0 +1,1924 @@
+{
+  "info": {
+    "name": "EShop API Exhaustive: FR-16 Import",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Setup: Admin Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"admin@eshop.com\", \"password\": \"Admin123!\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Admin Login Success', () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+              "if(pm.response.code === 200) { pm.environment.set('admin_token', pm.response.json().token); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-001: Valid array 1 item",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-002: Valid array 2 items",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1\n    },\n    {\n      \"name\": \"B\",\n      \"price\": 200,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-003: Empty array",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": []\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-004: Missing products field",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-005: Products is null",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": null}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-006: Products is string",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": \"abc\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-007: Products is object",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": {}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-008: Array with 1000 items (Large)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": [{\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}, {\"name\": \"A\", \"price\": 100, \"category_id\": 1}]}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-009: Name missing",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-010: Name empty",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-011: Name whitespace",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"   \",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-012: Name 255 chars",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-013: Name 256 chars",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-014: Name is integer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": 123,\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201, 400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-015: Name is null",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": null,\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-016: Price missing",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-017: Price zero",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 0,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-018: Price negative",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": -100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-019: Price max INT",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 2147483647,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-020: Price float",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100.5,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-021: Price string format",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": \"100\",\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-022: Price null",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": null,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-023: Category missing",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-024: Category zero",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 0\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-025: Category negative",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": -1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-026: Category string",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": \"1\"\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-027: Category null",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": null\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-028: Category non-existent",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 9999\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-029: Description super long",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1,\n      \"description\": \"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\"\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-030: Image URL invalid",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1,\n      \"imageUrl\": \"not_a_url\"\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-031: SSRF in imageUrl",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1,\n      \"imageUrl\": \"http://127.0.0.1/admin\"\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-032: XSS in Name",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"<script>alert(1)</script>\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-033: SQLi in Name",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"Prod ' OR 1=1\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-034: Mass Assignment (id)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1,\n      \"id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-035: Mass Assignment (role)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1,\n      \"role\": \"admin\"\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-036: Atomic Rollback (Valid, Valid, Invalid)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1\n    },\n    {\n      \"name\": \"B\",\n      \"price\": -1,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-037: Double Submission (Duplicate exact item)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1\n    },\n    {\n      \"name\": \"A\",\n      \"price\": 100,\n      \"category_id\": 1\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-038: User Token (Not Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{user_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([401, 403]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-039: No Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([401]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-040: Missing array bracket JSON",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"products\": ["
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-041: Wrong Content-Type Form-Data",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "multipart/form-data"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400, 415]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-042: Products array containing null",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    null\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-043: Products array containing string",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    \"Prod1\"\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-044: Products array containing array",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    []\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-IMP-045: Method Override GET",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/admin/import-products",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "import-products"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected Status', () => pm.expect(pm.response.code).to.be.oneOf([404, 405]));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

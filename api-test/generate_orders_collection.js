@@ -1,0 +1,350 @@
+const fs = require('fs');
+const path = require('path');
+
+const collection = {
+    "info": {
+        "name": "Eshop Orders API DDT",
+        "description": "Collection for testing Orders API endpoints via Data-Driven Testing.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {"key": "user_token", "value": ""},
+        {"key": "admin_token", "value": ""},
+        {"key": "user2_token", "value": ""},
+        {"key": "setup_done", "value": ""},
+        {"key": "test_order_id", "value": ""}
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Add X-Student-Id header",
+                    "let student_id = pm.environment.get('student_id') || '23127378';",
+                    "pm.request.headers.add({ key: 'X-Student-Id', value: student_id });",
+                    "",
+                    "if (!pm.collectionVariables.get('setup_done') && pm.info.iteration === 0) {",
+                    "    const baseUrl = pm.variables.get('base_url');",
+                    "    ",
+                    "    // Login user",
+                    "    pm.sendRequest({",
+                    "        url: baseUrl + '/api/login',",
+                    "        method: 'POST',",
+                    "        header: {'Content-Type': 'application/json'},",
+                    "        body: {mode: 'raw', raw: JSON.stringify({email: 'test@eshop.com', password: 'Test1234!'})}",
+                    "    }, (err, res) => {",
+                    "        if (res && res.code === 200) {",
+                    "            pm.collectionVariables.set('user_token', res.json().token);",
+                    "        }",
+                    "        ",
+                    "        // Login admin",
+                    "        pm.sendRequest({",
+                    "            url: baseUrl + '/api/login',",
+                    "            method: 'POST',",
+                    "            header: {'Content-Type': 'application/json'},",
+                    "            body: {mode: 'raw', raw: JSON.stringify({email: 'admin@eshop.com', password: 'Admin123!'})}",
+                    "        }, (err, res) => {",
+                    "            if (res && res.code === 200) {",
+                    "                pm.collectionVariables.set('admin_token', res.json().token);",
+                    "            }",
+                    "            ",
+                    "            // Register user2",
+                    "            pm.sendRequest({",
+                    "                url: baseUrl + '/api/register',",
+                    "                method: 'POST',",
+                    "                header: {'Content-Type': 'application/json'},",
+                    "                body: {mode: 'raw', raw: JSON.stringify({name: 'Test User 2', email: 'testuser2@eshop.com', password: 'Test1234!'})}",
+                    "            }, (err, res) => {",
+                    "                // Login user2",
+                    "                pm.sendRequest({",
+                    "                    url: baseUrl + '/api/login',",
+                    "                    method: 'POST',",
+                    "                    header: {'Content-Type': 'application/json'},",
+                    "                    body: {mode: 'raw', raw: JSON.stringify({email: 'testuser2@eshop.com', password: 'Test1234!'})}",
+                    "                }, (err, res) => {",
+                    "                    if (res && res.code === 200) {",
+                    "                        pm.collectionVariables.set('user2_token', res.json().token);",
+                    "                    }",
+                    "                    pm.collectionVariables.set('setup_done', 'true');",
+                    "                });",
+                    "            });",
+                    "        });",
+                    "    });",
+                    "}"
+                ]
+            }
+        }
+    ],
+    "item": [
+        {
+            "name": "GET: My Orders",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/orders/my-orders",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "orders", "my-orders"]
+                }
+            },
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const target = pm.iterationData.get('target_request');",
+                            "if (target !== 'get_my_orders') {",
+                            "    pm.variables.set('skip', 'true');",
+                            "    return;",
+                            "}",
+                            "pm.variables.set('skip', 'false');",
+                            "const authRole = pm.iterationData.get('auth_role');",
+                            "const authOverride = pm.iterationData.get('auth_override');",
+                            "if (authRole !== 'none') {",
+                            "    let token = pm.collectionVariables.get('user_token');",
+                            "    if (authOverride) token = authOverride;",
+                            "    pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + token});",
+                            "}"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "if (pm.variables.get('skip') === 'true') {",
+                            "    pm.test(`Skipped: Not target_request`, function() { pm.expect(true).to.be.true; });",
+                            "    return;",
+                            "}",
+                            "const tcId = pm.iterationData.get('tc_id');",
+                            "const tcName = pm.iterationData.get('tc_name');",
+                            "const expectedStatus = pm.iterationData.get('expected_status');",
+                            "const isBug = pm.iterationData.get('is_bug');",
+                            "const bugPrefix = isBug ? '[BUG-DETECT] ' : '';",
+                            "pm.test(`[${tcId}] ${bugPrefix}${tcName} - Expected ${expectedStatus}`, function() {",
+                            "    pm.response.to.have.status(expectedStatus);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "GET: Order Detail",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/orders/{{test_order_id}}",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "orders", "{{test_order_id}}"]
+                }
+            },
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const target = pm.iterationData.get('target_request');",
+                            "if (target !== 'get_order_detail') {",
+                            "    pm.variables.set('skip', 'true');",
+                            "    return;",
+                            "}",
+                            "pm.variables.set('skip', 'false');",
+                            "const authRole = pm.iterationData.get('auth_role');",
+                            "if (authRole !== 'none') {",
+                            "    let token = authRole === 'user2' ? pm.collectionVariables.get('user2_token') : pm.collectionVariables.get('user_token');",
+                            "    pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + token});",
+                            "}",
+                            "let pathId = pm.iterationData.get('path_param_id');",
+                            "if (!pathId) {",
+                            "    pm.variables.set('test_order_id', '1'); // Fallback if no creation",
+                            "} else {",
+                            "    pm.variables.set('test_order_id', pathId);",
+                            "}"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "if (pm.variables.get('skip') === 'true') { return; }",
+                            "const tcId = pm.iterationData.get('tc_id');",
+                            "const tcName = pm.iterationData.get('tc_name');",
+                            "const expectedStatus = pm.iterationData.get('expected_status');",
+                            "const isBug = pm.iterationData.get('is_bug');",
+                            "const bugPrefix = isBug ? '[BUG-DETECT] ' : '';",
+                            "pm.test(`[${tcId}] ${bugPrefix}${tcName} - Expected ${expectedStatus}`, function() {",
+                            "    pm.response.to.have.status(expectedStatus);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "PUT: Cancel Order",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/orders/{{test_order_id}}/cancel",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "orders", "{{test_order_id}}", "cancel"]
+                }
+            },
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const target = pm.iterationData.get('target_request');",
+                            "if (target !== 'cancel_order') {",
+                            "    pm.variables.set('skip', 'true');",
+                            "    return;",
+                            "}",
+                            "pm.variables.set('skip', 'false');",
+                            "const authRole = pm.iterationData.get('auth_role');",
+                            "let token = pm.collectionVariables.get('user_token');",
+                            "if (authRole === 'user2') token = pm.collectionVariables.get('user2_token');",
+                            "if (authRole === 'admin') token = pm.collectionVariables.get('admin_token');",
+                            "pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + token});",
+                            "pm.variables.set('test_order_id', '1');"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "if (pm.variables.get('skip') === 'true') { return; }",
+                            "const tcId = pm.iterationData.get('tc_id');",
+                            "const tcName = pm.iterationData.get('tc_name');",
+                            "const expectedStatus = pm.iterationData.get('expected_status');",
+                            "const isBug = pm.iterationData.get('is_bug');",
+                            "const bugPrefix = isBug ? '[BUG-DETECT] ' : '';",
+                            "pm.test(`[${tcId}] ${bugPrefix}${tcName} - Expected ${expectedStatus}`, function() {",
+                            "    pm.response.to.have.status(expectedStatus);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "PUT: Admin Update Status",
+            "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/json"}],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{{request_body}}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/admin/orders/{{test_order_id}}/status",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "admin", "orders", "{{test_order_id}}", "status"]
+                }
+            },
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const target = pm.iterationData.get('target_request');",
+                            "if (target !== 'admin_update_status') {",
+                            "    pm.variables.set('skip', 'true');",
+                            "    return;",
+                            "}",
+                            "pm.variables.set('skip', 'false');",
+                            "const authRole = pm.iterationData.get('auth_role');",
+                            "let token = pm.collectionVariables.get('admin_token');",
+                            "if (authRole === 'user') token = pm.collectionVariables.get('user_token');",
+                            "pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + token});",
+                            "pm.variables.set('test_order_id', '1');",
+                            "let rb = pm.iterationData.get('request_body');",
+                            "pm.variables.set('request_body', JSON.stringify(rb));"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "if (pm.variables.get('skip') === 'true') { return; }",
+                            "const tcId = pm.iterationData.get('tc_id');",
+                            "const tcName = pm.iterationData.get('tc_name');",
+                            "const expectedStatus = pm.iterationData.get('expected_status');",
+                            "const isBug = pm.iterationData.get('is_bug');",
+                            "const bugPrefix = isBug ? '[BUG-DETECT] ' : '';",
+                            "pm.test(`[${tcId}] ${bugPrefix}${tcName} - Expected ${expectedStatus}`, function() {",
+                            "    pm.response.to.have.status(expectedStatus);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "GET: Admin All Orders",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/admin/orders",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "admin", "orders"]
+                }
+            },
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const target = pm.iterationData.get('target_request');",
+                            "if (target !== 'admin_get_orders') {",
+                            "    pm.variables.set('skip', 'true');",
+                            "    return;",
+                            "}",
+                            "pm.variables.set('skip', 'false');",
+                            "const authRole = pm.iterationData.get('auth_role');",
+                            "let token = pm.collectionVariables.get('admin_token');",
+                            "if (authRole === 'user') token = pm.collectionVariables.get('user_token');",
+                            "pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + token});"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "if (pm.variables.get('skip') === 'true') { return; }",
+                            "const tcId = pm.iterationData.get('tc_id');",
+                            "const tcName = pm.iterationData.get('tc_name');",
+                            "const expectedStatus = pm.iterationData.get('expected_status');",
+                            "const isBug = pm.iterationData.get('is_bug');",
+                            "const bugPrefix = isBug ? '[BUG-DETECT] ' : '';",
+                            "pm.test(`[${tcId}] ${bugPrefix}${tcName} - Expected ${expectedStatus}`, function() {",
+                            "    pm.response.to.have.status(expectedStatus);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+};
+
+fs.writeFileSync(path.join(__dirname, 'eshop_collection_orders.json'), JSON.stringify(collection, null, 2));

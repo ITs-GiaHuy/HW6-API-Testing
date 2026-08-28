@@ -1,0 +1,221 @@
+{
+  "info": {
+    "name": "E-Shop Login API DDT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.add({",
+          "    key: \"X-Student-Id\",",
+          "    value: pm.environment.get(\"student_id\") || \"23127378\"",
+          "});"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "0-Setup",
+      "item": [
+        {
+          "name": "Register Lockout Test Account",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.collectionVariables.get(\"setup_done\")) {",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201 || pm.response.code === 400) {",
+                  "    pm.collectionVariables.set(\"setup_done\", true);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Lockout Test\", \"email\": \"lockout_test@eshop.com\", \"password\": \"Test1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1-DDT Login Tests",
+      "item": [
+        {
+          "name": "POST Login - DDT Runner",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const email = pm.iterationData.get(\"email\");",
+                  "const password = pm.iterationData.get(\"password\");",
+                  "const waitMs = pm.iterationData.get(\"wait_before_ms\");",
+                  "const tcId = pm.iterationData.get(\"tc_id\");",
+                  "",
+                  "if (waitMs > 0) {",
+                  "    setTimeout(function() {}, waitMs);",
+                  "}",
+                  "",
+                  "if (tcId === \"TC-LGN-033\") { pm.request.headers.remove(\"Content-Type\"); }",
+                  "if (tcId === \"TC-LGN-034\") { pm.request.headers.upsert({key: \"Content-Type\", value: \"text/plain\"}); }",
+                  "if (tcId === \"TC-LGN-035\") { pm.request.method = \"GET\"; }",
+                  "if (tcId === \"TC-LGN-036\") { pm.request.method = \"PUT\"; }",
+                  "if (tcId === \"TC-LGN-037\") { pm.request.method = \"DELETE\"; }",
+                  "",
+                  "if (tcId === \"TC-LGN-038\") {",
+                  "    pm.request.body.mode = \"raw\";",
+                  "    pm.request.body.raw = \"email=test@eshop.com&password=Test1234!\";",
+                  "} else {",
+                  "    let body = {};",
+                  "    if (email === \"__EMPTY_BODY__\") {",
+                  "        body = null;",
+                  "    } else {",
+                  "        if (email !== \"__MISSING__\") {",
+                  "            body.email = email === \"__NULL__\" ? null ",
+                  "                       : email === \"__NUMBER_12345__\" ? 12345",
+                  "                       : email === \"__BOOLEAN_TRUE__\" ? true",
+                  "                       : email === \"__ARRAY__\" ? [\"test@eshop.com\"]",
+                  "                       : email;",
+                  "        }",
+                  "        if (password !== \"__MISSING__\") {",
+                  "            body.password = password === \"__NULL__\" ? null",
+                  "                          : password === \"__BOOLEAN_TRUE__\" ? true",
+                  "                          : password;",
+                  "        }",
+                  "    }",
+                  "    pm.request.body.raw = JSON.stringify(body || {});",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const tcId = pm.iterationData.get(\"tc_id\");",
+                  "const tcName = pm.iterationData.get(\"tc_name\");",
+                  "const expectedStatus = pm.iterationData.get(\"expected_status\");",
+                  "const shouldHaveToken = pm.iterationData.get(\"should_have_token\");",
+                  "const expectedError = pm.iterationData.get(\"expected_error\");",
+                  "const category = pm.iterationData.get(\"category\");",
+                  "",
+                  "pm.test(`[${tcId}] ${tcName} - Expected status ${expectedStatus}`, function() {",
+                  "    pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "if (shouldHaveToken) {",
+                  "    pm.test(`[${tcId}] Response contains JWT token`, function() {",
+                  "        const json = pm.response.json();",
+                  "        pm.expect(json).to.have.property(\"token\");",
+                  "        pm.expect(json.token).to.be.a(\"string\").and.not.empty;",
+                  "    });",
+                  "    ",
+                  "    pm.test(`[${tcId}] Response contains user object`, function() {",
+                  "        const json = pm.response.json();",
+                  "        pm.expect(json).to.have.property(\"user\");",
+                  "        pm.expect(json.user).to.have.property(\"id\");",
+                  "        pm.expect(json.user).to.have.property(\"email\");",
+                  "    });",
+                  "    ",
+                  "    pm.test(`[${tcId}] [BUG-DETECT] Response must NOT contain password`, function() {",
+                  "        const json = pm.response.json();",
+                  "        if (json.user) {",
+                  "            pm.expect(json.user).to.not.have.property(\"password\");",
+                  "        }",
+                  "    });",
+                  "}",
+                  "",
+                  "if (expectedError) {",
+                  "    pm.test(`[${tcId}] Error message matches expected`, function() {",
+                  "        const json = pm.response.json();",
+                  "        pm.expect(json).to.have.property(\"error\");",
+                  "        if (json.error) {",
+                  "            pm.expect(json.error).to.include(expectedError);",
+                  "        }",
+                  "    });",
+                  "}",
+                  "",
+                  "if (category === \"Schema\") {",
+                  "    pm.test(`[${tcId}] Response Content-Type is JSON`, function() {",
+                  "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "    });",
+                  "}",
+                  "",
+                  "pm.test(`[${tcId}] Response time < 2000ms`, function() {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
