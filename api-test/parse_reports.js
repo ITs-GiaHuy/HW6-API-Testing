@@ -46,5 +46,5 @@ for (const file of reportFiles) {
     summary += '\n';
 }
 
-fs.writeFileSync('reports/summary.md', summary);
-console.log('Summary generated at reports/summary.md');
+fs.writeFileSync(path.join(__dirname, 'reports/summary.md'), summary);
+console.log('Summary generated at ' + path.join(__dirname, 'reports/summary.md'));

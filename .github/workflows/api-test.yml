@@ -1,46 +1,54 @@
-name: API Automation Tests
+name: EShop API Automation Tests (HW06)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
-  test:
+  api-tests:
+    name: Run Newman API Test Suites
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
+        cache: 'npm'
 
-    - name: Install Newman and HTMLExtra Reporter
-      run: npm install -g newman newman-reporter-htmlextra
-
-    - name: Start EShop Backend Server
+    - name: Install Project Dependencies
       run: |
         npm install
-        npm start &
-        sleep 5
-      working-directory: ./backend
+        cd backend && npm install
+      working-directory: .
 
-    - name: Run API Tests via Newman
+    - name: Run EShop API Automation Tests (FR-02, FR-10/11, FR-16)
       run: |
-        mkdir -p reports
-        npx newman run postman/ESHOP_Collection.json \
-          -e postman/ESHOP_Environment.json \
-          --reporters cli,htmlextra \
-          --reporter-htmlextra-export ./reports/API_TestReport.html \
-          --delay-request 100 \
-          --bail
+        cd api-test
+        chmod +x run_tests_fixed.sh
+        ./run_tests_fixed.sh
 
-    - name: Upload Test Report
-      uses: actions/upload-artifact@v3
+    - name: Display Test Failure Summary
+      if: always()
+      run: |
+        if [ -f "api-test/reports/summary.md" ]; then
+          cat api-test/reports/summary.md
+        fi
+
+    - name: Upload API Test Reports (HTML & JSON)
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: API_TestReport
-        path: ./reports/API_TestReport.html
+        name: EShop_API_TestReports
+        path: |
+          api-test/reports/*.html
+          api-test/reports/*.json
+          api-test/reports/summary.md
+        if-no-files-found: warn
+
