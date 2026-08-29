@@ -1,0 +1,307 @@
+{
+  "info": {
+    "_postman_id": "a9a3b831-294c-4e8c-8be9-cf4d88e7d23d",
+    "name": "E-Shop Import Products API DDT",
+    "description": "Data-Driven Testing collection for POST /api/admin/import-products",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0-Setup",
+      "item": [
+        {
+          "name": "Setup: Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"admin_token\", pm.response.json().token);",
+                  "}",
+                  "if (pm.info.iteration !== 0) {",
+                  "    postman.setNextRequest(\"Setup: Login User\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.info.iteration !== 0) {",
+                  "    postman.setNextRequest(\"Setup: Login User\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"admin@eshop.com\",\"password\":\"Admin123!\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Setup: Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"user_token\", pm.response.json().token);",
+                  "}",
+                  "if (pm.info.iteration !== 0) {",
+                  "    postman.setNextRequest(\"POST Import Products - DDT Runner\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.info.iteration !== 0) {",
+                  "    postman.setNextRequest(\"POST Import Products - DDT Runner\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"test@eshop.com\",\"password\":\"Test1234!\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1-DDT Import Tests",
+      "item": [
+        {
+          "name": "POST Import Products - DDT Runner",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tcId = pm.iterationData.get('tc_id');",
+                  "const authRole = pm.iterationData.get('auth_role');",
+                  "const authOverride = pm.iterationData.get('auth_override');",
+                  "const sendRawBody = pm.iterationData.get('send_raw_body');",
+                  "const rawBody = pm.iterationData.get('raw_body');",
+                  "const products = pm.iterationData.get('products');",
+                  "",
+                  "// Set auth header based on role",
+                  "if (authRole === 'none') {",
+                  "    pm.request.headers.remove('Authorization');",
+                  "} else if (authRole === 'user') {",
+                  "    pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + pm.collectionVariables.get('user_token')});",
+                  "} else if (authOverride) {",
+                  "    pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + authOverride});",
+                  "} else {",
+                  "    pm.request.headers.upsert({key: 'Authorization', value: 'Bearer ' + pm.collectionVariables.get('admin_token')});",
+                  "}",
+                  "",
+                  "// Set body",
+                  "if (sendRawBody) {",
+                  "    pm.request.body.raw = rawBody;",
+                  "} else {",
+                  "    pm.request.body.raw = JSON.stringify({products: products});",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const tcId = pm.iterationData.get('tc_id');",
+                  "const tcName = pm.iterationData.get('tc_name');",
+                  "const expectedStatus = pm.iterationData.get('expected_status');",
+                  "const expectedInserted = pm.iterationData.get('expected_inserted');",
+                  "const expectedError = pm.iterationData.get('expected_error');",
+                  "const expectedErrorsCount = pm.iterationData.get('expected_errors_count');",
+                  "const isBug = pm.iterationData.get('is_bug');",
+                  "const bugDesc = pm.iterationData.get('bug_description');",
+                  "const category = pm.iterationData.get('category');",
+                  "",
+                  "// Core status assertion",
+                  "const bugPrefix = isBug ? '[BUG-DETECT] ' : '';",
+                  "pm.test(`[${tcId}] ${bugPrefix}${tcName} - Expected ${expectedStatus}`, function() {",
+                  "    pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// Response time",
+                  "pm.test(`[${tcId}] Response time < 5000ms`, function() {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "// Content-Type check",
+                  "pm.test(`[${tcId}] Content-Type is JSON`, function() {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "try {",
+                  "    let json; try { json = pm.response.json(); } catch(e) { pm.expect.fail(\"Response is not JSON\"); }",
+                  "    ",
+                  "    if (expectedStatus === 200 && expectedInserted > 0) {",
+                  "        pm.test(`[${tcId}] Inserted count matches`, function() {",
+                  "            pm.expect(json.inserted).to.eql(expectedInserted);",
+                  "        });",
+                  "        pm.test(`[${tcId}] Has message field`, function() {",
+                  "            pm.expect(json).to.have.property('message');",
+                  "        });",
+                  "    }",
+                  "    ",
+                  "    if (expectedError) {",
+                  "        pm.test(`[${tcId}] Error message present`, function() {",
+                  "            pm.expect(json).to.have.property('error');",
+                  "        });",
+                  "    }",
+                  "    ",
+                  "    if (expectedErrorsCount > 0) {",
+                  "        pm.test(`[${tcId}] Errors array has ${expectedErrorsCount} items`, function() {",
+                  "            pm.expect(json.errors).to.have.lengthOf(expectedErrorsCount);",
+                  "        });",
+                  "    }",
+                  "    ",
+                  "    // Schema: No stack trace in error response",
+                  "    if (pm.response.code >= 400) {",
+                  "        pm.test(`[${tcId}] No stack trace in error`, function() {",
+                  "            const body = pm.response.text();",
+                  "            pm.expect(body).to.not.include('at ');",
+                  "            pm.expect(body).to.not.include('node_modules');",
+                  "        });",
+                  "    }",
+                  "} catch(e) {",
+                  "    // Non-JSON response",
+                  "    if (expectedStatus < 500) {",
+                  "        pm.test(`[${tcId}] Response should be valid JSON`, function() {",
+                  "            pm.response.json(); // will throw if not JSON",
+                  "        });",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/import-products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "import-products"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.upsert({key: 'X-Student-Id', value: '23127378'});"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "setup_done",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

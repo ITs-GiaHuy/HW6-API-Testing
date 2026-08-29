@@ -1,0 +1,54 @@
+name: EShop API Automation Tests (HW06)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: Run Newman API Test Suites
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install Project Dependencies
+      run: |
+        npm install
+        cd backend && npm install
+      working-directory: .
+
+    - name: Run EShop API Automation Tests (FR-02, FR-10/11, FR-16)
+      run: |
+        cd api-test
+        chmod +x run_tests_fixed.sh
+        ./run_tests_fixed.sh
+
+    - name: Display Test Failure Summary
+      if: always()
+      run: |
+        if [ -f "api-test/reports/summary.md" ]; then
+          cat api-test/reports/summary.md
+        fi
+
+    - name: Upload API Test Reports (HTML & JSON)
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: EShop_API_TestReports
+        path: |
+          api-test/reports/*.html
+          api-test/reports/*.json
+          api-test/reports/summary.md
+        if-no-files-found: warn
+
