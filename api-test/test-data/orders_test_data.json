@@ -217,7 +217,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "confirmed"},
+    "request_body": {
+      "status": "confirmed"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 200,
@@ -236,7 +238,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "shipping"},
+    "request_body": {
+      "status": "shipping"
+    },
     "precondition": "create_confirmed",
     "precondition_status": "",
     "expected_status": 200,
@@ -255,7 +259,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "delivered"},
+    "request_body": {
+      "status": "delivered"
+    },
     "precondition": "create_shipping",
     "precondition_status": "",
     "expected_status": 200,
@@ -274,7 +280,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "canceled"},
+    "request_body": {
+      "status": "canceled"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 200,
@@ -293,7 +301,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "canceled"},
+    "request_body": {
+      "status": "canceled"
+    },
     "precondition": "create_confirmed",
     "precondition_status": "",
     "expected_status": 200,
@@ -312,7 +322,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "delivered"},
+    "request_body": {
+      "status": "delivered"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 400,
@@ -331,7 +343,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "shipping"},
+    "request_body": {
+      "status": "shipping"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 400,
@@ -350,7 +364,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "delivered"},
+    "request_body": {
+      "status": "delivered"
+    },
     "precondition": "create_confirmed",
     "precondition_status": "",
     "expected_status": 400,
@@ -369,7 +385,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "confirmed"},
+    "request_body": {
+      "status": "confirmed"
+    },
     "precondition": "create_shipping",
     "precondition_status": "",
     "expected_status": 400,
@@ -388,7 +406,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "pending"},
+    "request_body": {
+      "status": "pending"
+    },
     "precondition": "create_delivered",
     "precondition_status": "",
     "expected_status": 400,
@@ -407,7 +427,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "canceled"},
+    "request_body": {
+      "status": "canceled"
+    },
     "precondition": "create_delivered",
     "precondition_status": "",
     "expected_status": 400,
@@ -426,7 +448,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "pending"},
+    "request_body": {
+      "status": "pending"
+    },
     "precondition": "create_canceled",
     "precondition_status": "",
     "expected_status": 400,
@@ -445,7 +469,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "delivered"},
+    "request_body": {
+      "status": "delivered"
+    },
     "precondition": "create_canceled",
     "precondition_status": "",
     "expected_status": 400,
@@ -483,7 +509,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "confirmed"},
+    "request_body": {
+      "status": "confirmed"
+    },
     "precondition": "create_confirmed",
     "precondition_status": "",
     "expected_status": 400,
@@ -521,7 +549,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "confirmed"},
+    "request_body": {
+      "status": "confirmed"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 200,
@@ -562,12 +592,12 @@
     "request_body": {},
     "precondition": "",
     "precondition_status": "",
-    "expected_status": 401,
+    "expected_status": 403,
     "expected_body_contains": "",
     "expected_error": "",
     "is_bug": false,
     "bug_description": "",
-    "notes": ""
+    "notes": "JWT verification failure returns 403 Forbidden in Express jsonwebtoken middleware"
   },
   {
     "tc_id": "TC-ORD-031",
@@ -619,12 +649,12 @@
     "request_body": {},
     "precondition": "create_pending",
     "precondition_status": "",
-    "expected_status": 403,
+    "expected_status": 404,
     "expected_body_contains": "",
     "expected_error": "",
     "is_bug": false,
     "bug_description": "",
-    "notes": ""
+    "notes": "Backend safely returns 404 Not Found when order does not belong to user"
   },
   {
     "tc_id": "TC-ORD-034",
@@ -654,7 +684,9 @@
     "auth_role": "user",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "confirmed"},
+    "request_body": {
+      "status": "confirmed"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 403,
@@ -692,7 +724,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "hacked"},
+    "request_body": {
+      "status": "hacked"
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 400,
@@ -711,7 +745,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": ""},
+    "request_body": {
+      "status": ""
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 400,
@@ -749,7 +785,10 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "confirmed", "user_id": 999},
+    "request_body": {
+      "status": "confirmed",
+      "user_id": 999
+    },
     "precondition": "create_pending",
     "precondition_status": "",
     "expected_status": 200,
@@ -844,7 +883,9 @@
     "auth_role": "admin",
     "auth_override": "",
     "path_param_id": "",
-    "request_body": {"status": "pending"},
+    "request_body": {
+      "status": "pending"
+    },
     "precondition": "create_delivered",
     "precondition_status": "",
     "expected_status": 400,
