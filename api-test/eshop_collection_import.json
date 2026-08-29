@@ -186,7 +186,7 @@
                   "});",
                   "",
                   "try {",
-                  "    const json = pm.response.json();",
+                  "    let json; try { json = pm.response.json(); } catch(e) { pm.expect.fail(\"Response is not JSON\"); }",
                   "    ",
                   "    if (expectedStatus === 200 && expectedInserted > 0) {",
                   "        pm.test(`[${tcId}] Inserted count matches`, function() {",

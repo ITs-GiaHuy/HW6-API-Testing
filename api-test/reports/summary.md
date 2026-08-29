@@ -1,0 +1,216 @@
+# API Test Failures Summary
+
+## Report: reports/LoginReport.json
+- Total requests: 46
+- Failed requests: 0
+- Total assertions: 147
+- Failed assertions: 76
+
+### Failures:
+- **Iteration 0: POST Login - DDT Runner**
+  - AssertionError: expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+- **Iteration 1: POST Login - DDT Runner**
+  - AssertionError: expected { id: 1, name: 'Admin User', …(8) } to not have property 'password'
+- **Iteration 2: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 200 but got 401
+  - AssertionError: expected { error: 'Invalid email or password' } to have property 'token'
+  - AssertionError: expected { error: 'Invalid email or password' } to have property 'user'
+- **Iteration 3: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 4: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 5: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 6: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 7: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 8: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 9: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 10: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 11: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 12: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Password cannot be empty'
+- **Iteration 13: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Password cannot be empty'
+- **Iteration 14: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Password too long'
+- **Iteration 15: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 401 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Invalid email or password'
+- **Iteration 17: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 18: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Email is required'
+- **Iteration 19: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Password is required'
+- **Iteration 20: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Email is required'
+- **Iteration 21: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 22: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 23: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Invalid password format'
+- **Iteration 24: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 25: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 401 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Invalid email or password'
+- **Iteration 28: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 401 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Invalid email or password'
+- **Iteration 30: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 31: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Invalid email format'
+- **Iteration 32: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 415 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Unsupported Media Type'
+- **Iteration 33: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 415 but got 500
+  - AssertionError: Response is not JSON
+- **Iteration 34: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 405 but got 404
+  - AssertionError: Response is not JSON
+- **Iteration 35: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 405 but got 404
+  - AssertionError: Response is not JSON
+- **Iteration 36: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 405 but got 404
+  - AssertionError: Response is not JSON
+- **Iteration 37: POST Login - DDT Runner**
+  - AssertionError: Response is not JSON
+- **Iteration 39: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 403 but got 401
+  - AssertionError: expected 'Invalid email or password' to include 'Tài khoản đã bị khóa. Vui lòng thử lạ…'
+- **Iteration 42: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 200 but got 403
+  - AssertionError: expected { Object (error) } to have property 'token'
+  - AssertionError: expected { Object (error) } to have property 'user'
+- **Iteration 43: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 200 but got 403
+  - AssertionError: expected { Object (error) } to have property 'token'
+  - AssertionError: expected { Object (error) } to have property 'user'
+- **Iteration 44: POST Login - DDT Runner**
+  - AssertionError: expected response to have status code 401 but got 403
+  - AssertionError: expected 'Tài khoản đã bị khóa. Vui lòng thử lạ…' to include 'Invalid email or password'
+
+## Report: reports/OrdersReport.json
+- Total requests: 274
+- Failed requests: 0
+- Total assertions: 86
+- Failed assertions: 14
+
+### Failures:
+- **Iteration 11: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+- **Iteration 12: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+- **Iteration 13: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+- **Iteration 14: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+- **Iteration 15: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+- **Iteration 24: PUT: Cancel Order**
+  - AssertionError: expected response to have status code 400 but got 200
+- **Iteration 27: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+- **Iteration 29: GET: My Orders**
+  - AssertionError: expected response to have status code 401 but got 403
+- **Iteration 30: GET: Order Detail**
+  - AssertionError: expected response to have status code 401 but got 200
+- **Iteration 31: GET: Order Detail**
+  - AssertionError: expected response to have status code 403 but got 200
+- **Iteration 32: PUT: Cancel Order**
+  - AssertionError: expected response to have status code 403 but got 404
+- **Iteration 33: GET: Admin All Orders**
+  - AssertionError: expected response to have status code 403 but got 200
+- **Iteration 34: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 403 but got 400
+- **Iteration 39: PUT: Admin Update Status**
+  - AssertionError: expected response to have status code 200 but got 400
+
+## Report: reports/ImportReport.json
+- Total requests: 135
+- Failed requests: 0
+- Total assertions: 204
+- Failed assertions: 29
+
+### Failures:
+- **Iteration 4: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+- **Iteration 5: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+- **Iteration 6: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 8: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 11: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 12: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 15: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 16: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 18: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 23: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 500
+  - AssertionError: expected 'text/html; charset=utf-8' to include 'application/json'
+  - JSONError: Unexpected token '<' at 1:1
+<!DOCTYPE html>
+^
+- **Iteration 24: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+- **Iteration 27: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 28: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 29: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+  - AssertionError: expected [] to have a length of 1 but got +0
+- **Iteration 30: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+- **Iteration 35: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 403 but got 200
+- **Iteration 44: POST Import Products - DDT Runner**
+  - AssertionError: expected response to have status code 400 but got 200
+
