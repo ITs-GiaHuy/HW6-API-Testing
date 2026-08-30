@@ -88,8 +88,7 @@ npx newman run "$SCRIPT_DIR/eshop_collection_login.json" \
   --reporter-htmlextra-title "EShop Login API - DDT Report (23127378)" \
   --reporter-json-export "$SCRIPT_DIR/reports/LoginReport.json" \
   --delay-request 150 \
-  --timeout-request 10000 \
-  || echo "  ⚠ Login tests completed with failures (expected for bug detection)"
+  --timeout-request 10000
 
 # ============================================================
 # FR-10/11: Orders API Tests (45 test cases, DDT)

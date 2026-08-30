@@ -2,9 +2,9 @@ name: EShop API Automation Tests (HW06)
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "test-fail-demo" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "test-fail-demo" ]
   workflow_dispatch:
 
 jobs:
