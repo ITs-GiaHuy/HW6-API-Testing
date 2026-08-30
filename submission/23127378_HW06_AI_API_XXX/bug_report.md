@@ -6,6 +6,8 @@
 | **Lớp** | 23KTPM2 |
 | **Môn** | Kiểm thử phần mềm |
 | **Ngày báo cáo** | 29/08/2026 |
+| **GitHub Repository** | [ITs-GiaHuy/HW6-API-Testing](https://github.com/ITs-GiaHuy/HW6-API-Testing) |
+| **GitHub Issues** | [https://github.com/ITs-GiaHuy/HW6-API-Testing/issues](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues) |
 
 ---
 
@@ -25,6 +27,7 @@
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-LGN-01 |
+| **GitHub Issue** | [#1](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/1) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `POST /api/login` |
 | **Related Requirement** | SEC-01 — Password không được lộ trong response |
@@ -50,7 +53,7 @@ Response user object **chứa trường `password`**, lộ thông tin nhạy c�
 
 **Evidence:** Newman LoginReport — iterations 0, 1, 42, 43
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#1](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/1) — `bug_lgn_01_password_exposed.png`
 
 ---
 
@@ -59,6 +62,7 @@ Response user object **chứa trường `password`**, lộ thông tin nhạy c�
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-LGN-02 |
+| **GitHub Issue** | [#2](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/2) |
 | **Severity** | 🟡 **Medium** |
 | **API Endpoint** | `POST /api/login` |
 | **Related Requirement** | FR-02 — Validate input |
@@ -81,7 +85,7 @@ Server trả về `401 Unauthorized` với message chung chung `"Invalid email o
 
 **Evidence:** Newman LoginReport — iterations 3–11, 17–18, 21–22, 24, 30–31
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#2](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/2) — `bug_lgn_02_no_email_validation.png`
 
 ---
 
@@ -90,6 +94,7 @@ Server trả về `401 Unauthorized` với message chung chung `"Invalid email o
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-LGN-03 |
+| **GitHub Issue** | [#3](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/3) |
 | **Severity** | 🟡 **Medium** |
 | **API Endpoint** | `POST /api/login` |
 | **Related Requirement** | FR-02 — Validate input |
@@ -112,7 +117,7 @@ Server trả về `401 Unauthorized` với message chung chung `"Invalid email o
 
 **Evidence:** Newman LoginReport — iterations 12–14
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#3](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/3) — `bug_lgn_03_no_password_validation.png`
 
 ---
 
@@ -121,6 +126,7 @@ Server trả về `401 Unauthorized` với message chung chung `"Invalid email o
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-LGN-04 |
+| **GitHub Issue** | [#4](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/4) |
 | **Severity** | 🟢 **Low** |
 | **API Endpoint** | `POST /api/login` |
 | **Related Requirement** | — |
@@ -140,7 +146,7 @@ Server trả về `401 Unauthorized` hoặc `500 Internal Server Error` thay vì
 
 **Evidence:** Newman LoginReport — iterations 33–34
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#4](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/4) — `bug_lgn_04_content_type.png`
 
 ---
 
@@ -149,6 +155,7 @@ Server trả về `401 Unauthorized` hoặc `500 Internal Server Error` thay vì
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-LGN-05 |
+| **GitHub Issue** | [#5](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/5) |
 | **Severity** | 🟢 **Low** |
 | **API Endpoint** | `/api/login` |
 | **Related Requirement** | — |
@@ -170,7 +177,7 @@ Server trả về `404 Not Found`.
 
 **Evidence:** Newman LoginReport — iterations 35–37
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#5](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/5) — `bug_lgn_05_http_methods.png`
 
 ---
 
@@ -181,6 +188,7 @@ Server trả về `404 Not Found`.
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-ORD-01 |
+| **GitHub Issue** | [#6](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/6) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `PUT /api/admin/orders/:id/status` |
 | **Related Requirement** | FR-10 — Canceled is terminal state |
@@ -207,7 +215,7 @@ Server trả về `200 OK` và đơn hàng được chuyển sang trạng thái 
 
 **Evidence:** Newman OrdersReport — iteration 23 (PUT Admin Update Status)
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#6](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/6) — `bug_ord_01_terminal_state.png`
 
 ---
 
@@ -216,6 +224,7 @@ Server trả về `200 OK` và đơn hàng được chuyển sang trạng thái 
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-ORD-02 |
+| **GitHub Issue** | [#7](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/7) |
 | **Severity** | 🟡 **Medium** |
 | **API Endpoint** | `PUT /api/admin/orders/:id/status` & `PUT /api/orders/:id/cancel` |
 | **Related Requirement** | FR-10 — State machine rules |
@@ -236,7 +245,7 @@ Server trả về `200 OK`, chấp nhận transition không hợp lệ.
 
 **Evidence:** Newman OrdersReport — iterations 23–24
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#7](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/7) — `bug_ord_02_idempotent.png`
 
 ---
 
@@ -245,6 +254,7 @@ Server trả về `200 OK`, chấp nhận transition không hợp lệ.
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-ORD-03 |
+| **GitHub Issue** | [#8](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/8) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `GET /api/orders/:id` |
 | **Related Requirement** | SEC-02 — JWT required for all protected endpoints |
@@ -264,7 +274,7 @@ Server trả về `200 OK` kèm **toàn bộ thông tin đơn hàng** — bất 
 
 **Evidence:** Newman OrdersReport — iteration 30
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#8](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/8) — `bug_ord_03_no_auth.png`
 
 ---
 
@@ -273,6 +283,7 @@ Server trả về `200 OK` kèm **toàn bộ thông tin đơn hàng** — bất 
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-ORD-04 |
+| **GitHub Issue** | [#9](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/9) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `GET /api/orders/:id` |
 | **Related Requirement** | FR-11 — User chỉ xem được đơn hàng của mình |
@@ -294,7 +305,7 @@ Server trả về `200 OK` kèm **toàn bộ thông tin đơn hàng của User A
 
 **Evidence:** Newman OrdersReport — iteration 31
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#9](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/9) — `bug_ord_04_idor.png`
 
 ---
 
@@ -303,6 +314,7 @@ Server trả về `200 OK` kèm **toàn bộ thông tin đơn hàng của User A
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-ORD-05 |
+| **GitHub Issue** | [#10](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/10) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `GET /api/admin/orders`, `PUT /api/admin/orders/:id/status` |
 | **Related Requirement** | SEC-03, FR-12 — Admin-only access control |
@@ -324,7 +336,7 @@ Server trả về `200 OK` — regular user có thể truy cập và thao tác t
 
 **Evidence:** Newman OrdersReport — iterations 33–34
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#10](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/10) — `bug_ord_05_no_admin_check.png`
 
 ---
 
@@ -335,6 +347,7 @@ Server trả về `200 OK` — regular user có thể truy cập và thao tác t
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-01 |
+| **GitHub Issue** | [#11](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/11) |
 | **Severity** | 🔴 **High** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | FR-16 — Name không được rỗng |
@@ -363,7 +376,7 @@ Server trả về `200 OK` và sản phẩm được import thành công với t
 
 **Evidence:** Newman ImportReport — iterations 4–6
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#11](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/11) — `bug_imp_01_no_name_validation.png`
 
 ---
 
@@ -372,6 +385,7 @@ Server trả về `200 OK` và sản phẩm được import thành công với t
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-02 |
+| **GitHub Issue** | [#12](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/12) |
 | **Severity** | 🟡 **Medium** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | FR-15 — Tên sản phẩm tối đa 255 ký tự |
@@ -391,7 +405,7 @@ Server trả về `200 OK`, sản phẩm được import với tên quá dài.
 
 **Evidence:** Newman ImportReport — iteration 8
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#12](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/12) — `bug_imp_02_name_length.png`
 
 ---
 
@@ -400,6 +414,7 @@ Server trả về `200 OK`, sản phẩm được import với tên quá dài.
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-03 |
+| **GitHub Issue** | [#13](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/13) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | FR-15 (giá phải > 0), FR-16 (validation trước khi import) |
@@ -426,7 +441,7 @@ Server trả về `200 OK`, sản phẩm được import với giá không hợp
 
 **Evidence:** Newman ImportReport — iterations 11–12, 15–16, 18
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#13](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/13) — `bug_imp_03_no_price_validation.png`
 
 ---
 
@@ -435,6 +450,7 @@ Server trả về `200 OK`, sản phẩm được import với giá không hợp
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-04 |
+| **GitHub Issue** | [#14](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/14) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | FR-16 — All-or-nothing atomic transaction |
@@ -462,7 +478,7 @@ Các sản phẩm hợp lệ được insert, các sản phẩm không hợp l�
 
 **Evidence:** Newman ImportReport — iteration 30
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#14](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/14) — `bug_imp_04_no_rollback.png`
 
 ---
 
@@ -471,6 +487,7 @@ Các sản phẩm hợp lệ được insert, các sản phẩm không hợp l�
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-05 |
+| **GitHub Issue** | [#15](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/15) |
 | **Severity** | 🔴 **Critical** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | SEC-03, FR-12 — Admin-only access |
@@ -491,7 +508,7 @@ Server trả về `200 OK`, sản phẩm được import thành công — regula
 
 **Evidence:** Newman ImportReport — iteration 35
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#15](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/15) — `bug_imp_05_no_admin_check.png`
 
 ---
 
@@ -500,6 +517,7 @@ Server trả về `200 OK`, sản phẩm được import thành công — regula
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-06 |
+| **GitHub Issue** | [#16](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/16) |
 | **Severity** | 🔴 **High** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | FR-16 — Validation trước khi import |
@@ -522,7 +540,7 @@ Server trả về `200 OK` hoặc **bị crash** (500 Internal Server Error) tù
 
 **Evidence:** Newman ImportReport — iterations 27–29
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#16](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/16) — `bug_imp_06_category_id.png`
 
 ---
 
@@ -531,6 +549,7 @@ Server trả về `200 OK` hoặc **bị crash** (500 Internal Server Error) tù
 | Field | Detail |
 |-------|--------|
 | **Bug ID** | BUG-IMP-07 |
+| **GitHub Issue** | [#17](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/17) |
 | **Severity** | 🔴 **High** |
 | **API Endpoint** | `POST /api/admin/import-products` |
 | **Related Requirement** | FR-16 — Validation trước khi import |
@@ -555,7 +574,7 @@ Server trả về `500 Internal Server Error` kèm **HTML error page** — serve
 
 **Evidence:** Newman ImportReport — iteration 23
 
-> 📸 Screenshot: [TODO: Chụp screenshot GitHub Issue #X và đặt vào thư mục screenshots/]
+> 📸 Screenshot: Issue [#17](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues/17) — `bug_imp_07_server_crash.png`
 
 ---
 
@@ -584,4 +603,4 @@ Server trả về `500 Internal Server Error` kèm **HTML error page** — serve
 
 > [!NOTE]
 > Tất cả bugs đã được report trên GitHub Issues page.
-> Link: `[TODO: ĐIỀN LINK GITHUB ISSUES]`
+> Link: [https://github.com/ITs-GiaHuy/HW6-API-Testing/issues](https://github.com/ITs-GiaHuy/HW6-API-Testing/issues)

@@ -179,4 +179,4 @@ Các tính năng của Postman đã được ứng dụng trong quá trình làm
 - ISTQB Foundation Level Syllabus
 - OWASP API Security Top 10
 - EShop SUT: https://github.com/ttbhanh/eshop-sut
-- GitHub Repository: `[TODO: ĐIỀN LINK GITHUB CỦA BẠN]`
+- GitHub Repository: [https://github.com/ITs-GiaHuy/HW6-API-Testing](https://github.com/ITs-GiaHuy/HW6-API-Testing)

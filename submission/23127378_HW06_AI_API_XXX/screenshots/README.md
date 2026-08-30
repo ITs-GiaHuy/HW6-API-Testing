@@ -31,3 +31,4 @@ Chụp screenshot cho mỗi bug đã tạo trên GitHub Issues page:
 
 ## 4. Newman Report (Optional)
 - `newman_report_sample.png` — Screenshot Newman HTML report trong browser
+- `newman_cli_run` - Screenshot Newman run in terminal

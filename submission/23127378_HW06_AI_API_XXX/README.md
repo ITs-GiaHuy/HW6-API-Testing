@@ -8,7 +8,7 @@
 | **MSSV** | 23127378 |
 | **Lớp** | 23KTPM2 |
 | **Môn** | Kiểm thử phần mềm |
-| **GitHub Repository** | `[TODO: ĐIỀN LINK GITHUB REPO]` |
+| **GitHub Repository** | [ITs-GiaHuy/HW6-API-Testing](https://github.com/ITs-GiaHuy/HW6-API-Testing) |
 
 ---
 
