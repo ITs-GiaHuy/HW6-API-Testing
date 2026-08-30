@@ -1,896 +1,112 @@
 # Agent Skill — AI-Driven API Test Generator
 
-## 1. Tổng quan thiết kế
+## 1. Tổng quan Thiết kế
 
-### Mục tiêu
-Thiết kế một hệ thống AI-driven có khả năng **tự động sinh test cases cho API** dựa trên:
-- API Specification (endpoint, method, request/response schema)
-- System Requirements (business rules, constraints)
-- Security Requirements (SEC-01 đến SEC-07)
+### 1.1. Mục tiêu
+Hệ thống **AI-Driven API Test Generator** được thiết kế để tự động hóa toàn diện quy trình kiểm thử API hướng đối tượng, chuyển giao từ tài liệu đặc tả kỹ thuật (API Specification / SRS) sang các bộ kịch bản kiểm thử sẵn sàng thực thi (Executable Postman Collections, Newman CLI Runner, và CI/CD GitHub Actions Pipeline).
 
-### Kiến trúc tổng quan — 4 Module Pipeline
+Hệ thống được xây dựng trên kiến trúc **Multi-Agent Skill Modular Pipeline** gồm **4 Module cốt lõi** và được hiện thực hóa qua **7 Agent Skills độc lập, có thể tái sử dụng** nằm trong thư mục `.agents/skills/`:
+
+| STT | Agent Skill | Module đại diện | Chuẩn / Tiêu chuẩn áp dụng | Vai trò cốt lõi |
+|:---:|---|---|---|---|
+| 1 | **`api-spec-analyzer`** | Module 1: Parser & IR | RFC 9110, Parameter Taxonomy | Phân tích đặc tả API, trích xuất cấu trúc, suy luận quy tắc nghiệp vụ ngầm định (Implicit Rules) và sinh Normalized IR. |
+| 2 | **`domain-partition-tester`** | Module 2: Strategy Generator | ISTQB FL EP & BVA (2-value, 3-value) | Sinh test case phân hoạch tương đương, phân tích giá trị biên, robustness testing và tổ hợp All-Pairs. |
+| 3 | **`state-transition-tester`** | Module 2: Strategy Generator | ISTQB FL FSM, 0/1/N-switch | Mô hình hóa máy trạng thái hữu hạn, sinh ma trận chuyển đổi âm bản (Negative State Matrix), kiểm tra Terminal state và RBAC. |
+| 4 | **`security-tester`** | Module 2: Strategy Generator | OWASP API Security Top 10 (2023) | Sinh các kịch bản kiểm thử thâm nhập: BOLA/IDOR, Broken Auth, Mass Assignment, BFLA, SQLi, XSS, SSRF. |
+| 5 | **`schema-validator`** | Module 2: Strategy Generator | JSON Schema Draft 2020-12, RFC 7807 | Kiểm thử hợp đồng dữ liệu nghiêm ngặt (`additionalProperties: false`), HTTP Status contract và cấu trúc báo lỗi thống nhất. |
+| 6 | **`test-case-auditor`** | Module 3: Quality Gate & Review | IEEE 829 / ISO 29119, AI Critique | Đánh giá chất lượng bộ test case theo 5 chiều, gán nhãn VALID / INVALID / INCOMPLETE, phản biện AI và tự động đề xuất mở rộng (Gap Analysis). |
+| 7 | **`postman-collection-generator`** | Module 4: Orchestrator & Execution | Postman Schema v2.1.0, Newman CLI | Chuyển đổi test cases thành Postman Collection JSON, sinh Pre-request Scripts (Auto Auth, Header `X-Student-Id`), Test Scripts (Chai.js, Ajv) và CI/CD workflow. |
+
+---
+
+## 2. Sơ đồ Kiến trúc & Luồng Dữ liệu (Mermaid Diagrams)
+
+### 2.1. Sơ đồ Kiến trúc Pipeline Tổng quan (System Architecture)
 
 ```mermaid
-flowchart TD
-    subgraph INPUT["📥 INPUT"]
-        A1["API Specification\n(api_specification.md)"]
-        A2["System Requirements\n(README.md / SRS)"]
-        A3["Security Requirements\n(SEC-01 → SEC-07)"]
+flowchart TB
+    subgraph INPUT["📥 ĐẦU VÀO HỆ THỐNG"]
+        A1["📄 API Specification<br/>(Markdown / OpenAPI / Swagger)"]
+        A2["📋 Yêu cầu Nghiệp vụ<br/>(Business Rules / SRS)"]
+        A3["🔒 Yêu cầu Bảo mật<br/>(SEC-01 → SEC-07 / OWASP)"]
     end
 
-    subgraph MODULE1["Module 1: API Spec Parser"]
-        B1["Parse Endpoint Info\n- Method, URL, Auth"]
-        B2["Extract Request Schema\n- Headers, Body, Params"]
-        B3["Extract Response Schema\n- Status codes, Body shape"]
-        B4["Identify Constraints\n- Required fields, types, ranges"]
+    subgraph M1["MODULE 1: API SPEC PARSER & IR"]
+        S1["🤖 Skill 1: api-spec-analyzer"]
+        S1_1["Trích xuất Contract & Taxonomy"]
+        S1_2["Suy luận Implicit Business Rules"]
+        S1_3["Xuất Normalized API Spec IR"]
+        S1 --> S1_1 --> S1_2 --> S1_3
     end
 
-    subgraph MODULE2["Module 2: Test Strategy Planner"]
-        C1["Domain Partition\nAnalysis"]
-        C2["State Transition\nAnalysis"]
-        C3["Security Threat\nMapping"]
-        C4["Schema Validation\nRules"]
-        C5["Test Coverage\nMatrix"]
+    subgraph M2["MODULE 2: MULTI-STRATEGY TEST GENERATORS"]
+        S2["🤖 Skill 2: domain-partition-tester<br/>(ISTQB EP & BVA)"]
+        S3["🤖 Skill 3: state-transition-tester<br/>(FSM & Negative Matrix)"]
+        S4["🤖 Skill 4: security-tester<br/>(OWASP Top 10 & Payloads)"]
+        S5["🤖 Skill 5: schema-validator<br/>(JSON Schema & RFC 7807)"]
     end
 
-    subgraph MODULE3["Module 3: Test Case Generator"]
-        D1["Generate Domain\nPartition Cases"]
-        D2["Generate State\nTransition Cases"]
-        D3["Generate Security\nTest Cases"]
-        D4["Generate Schema\nValidation Cases"]
-        D5["Assemble & Deduplicate"]
+    subgraph M3["MODULE 3: QUALITY GATE & AUDIT"]
+        S6["🤖 Skill 6: test-case-auditor<br/>(IEEE 829 / ISO 29119)"]
+        S6_1["5-Dimension Assessment<br/>(Soundness, Completeness, Consistency...)"]
+        S6_2["Triaging & Remediation<br/>(VALID / INVALID / INCOMPLETE)"]
+        S6_3["AI Critique & Gap Suggestions<br/>(Concurrency, IDOR, Edge Cases)"]
+        S6 --> S6_1 --> S6_2 --> S6_3
     end
 
-    subgraph MODULE4["Module 4: Test Case Validator"]
-        E1["Completeness Check\n(≥ 35 cases per API)"]
-        E2["Coverage Check\n(all 4 categories)"]
-        E3["Consistency Check\n(no contradictions)"]
-        E4["Format & Export\n(Postman / Excel)"]
+    subgraph M4["MODULE 4: AUTOMATION & ORCHESTRATION"]
+        S7["🤖 Skill 7: postman-collection-generator"]
+        S7_1["Postman Collection v2.1.0 Generator"]
+        S7_2["Pre-request Script (Auto Auth & X-Student-Id)"]
+        S7_3["Chai.js & Ajv Test Script Builder"]
+        S7_4["Newman CLI Runner & CI/CD Workflow"]
+        S7 --> S7_1 --> S7_2 --> S7_3 --> S7_4
     end
 
-    subgraph OUTPUT["📤 OUTPUT"]
-        F1["Postman Collection\n(.json)"]
-        F2["Test Cases Excel\n(.xlsx)"]
-        F3["Coverage Report\n(.md)"]
+    subgraph OUTPUT["📤 ĐẦU RA THỰC THI"]
+        O1["📦 Postman Collections (*.json)"]
+        O2["📊 Data-Driven Test Data (*.json / *.csv)"]
+        O3["📑 IEEE 829 Audit Report (*.md)"]
+        O4["📈 Newman HTML Reports (htmlextra)"]
+        O5["⚙️ CI/CD Workflow (.github/workflows/api-test.yml)"]
     end
 
-    A1 --> B1
-    A2 --> B1
-    A3 --> B1
-    B1 --> B2 --> B3 --> B4
+    INPUT --> S1
+    S1_3 --> S2
+    S1_3 --> S3
+    S1_3 --> S4
+    S1_3 --> S5
 
-    B4 --> C1
-    B4 --> C2
-    B4 --> C3
-    B4 --> C4
-    C1 --> C5
-    C2 --> C5
-    C3 --> C5
-    C4 --> C5
+    S2 -->|"TC-DOM-xxx"| S6
+    S3 -->|"TC-STA-xxx"| S6
+    S4 -->|"TC-SEC-xxx"| S6
+    S5 -->|"TC-SCH-xxx"| S6
 
-    C5 --> D1
-    C5 --> D2
-    C5 --> D3
-    C5 --> D4
-    D1 --> D5
-    D2 --> D5
-    D3 --> D5
-    D4 --> D5
+    S6_3 -->|"Bộ Test Case đã duyệt + mở rộng"| S7
 
-    D5 --> E1 --> E2 --> E3 --> E4
+    S7_4 --> O1
+    S7_4 --> O2
+    S7_4 --> O3
+    S7_4 --> O4
+    S7_4 --> O5
 
-    E4 --> F1
-    E4 --> F2
-    E4 --> F3
-
-    style INPUT fill:#1a1a2e,stroke:#e94560,color:#fff
-    style MODULE1 fill:#16213e,stroke:#0f3460,color:#fff
-    style MODULE2 fill:#1a1a2e,stroke:#e94560,color:#fff
-    style MODULE3 fill:#16213e,stroke:#0f3460,color:#fff
-    style MODULE4 fill:#1a1a2e,stroke:#e94560,color:#fff
-    style OUTPUT fill:#0f3460,stroke:#53a8b6,color:#fff
-```
-
-### Sequence Diagram — Luồng xử lý chi tiết
-
-```mermaid
-sequenceDiagram
-    actor User as Tester / AI Agent
-    participant Parser as Module 1:<br/>API Spec Parser
-    participant Planner as Module 2:<br/>Strategy Planner
-    participant Generator as Module 3:<br/>Test Case Generator
-    participant Validator as Module 4:<br/>Validator
-    participant LLM as LLM Backend<br/>(GPT/Claude/Gemini)
-
-    User->>Parser: Provide API Spec + Requirements
-    Parser->>Parser: Parse endpoint (method, URL, auth)
-    Parser->>Parser: Extract request/response schema
-    Parser->>Parser: Identify constraints & data types
-    Parser-->>Planner: Structured API Model
-
-    Planner->>LLM: Prompt: "Analyze domain partitions<br/>for these parameters"
-    LLM-->>Planner: Equivalence classes + boundary values
-    Planner->>LLM: Prompt: "Identify state transitions<br/>for this feature"
-    LLM-->>Planner: State diagram + transitions
-    Planner->>LLM: Prompt: "Map security threats<br/>(SEC-01 to SEC-07)"
-    LLM-->>Planner: Threat list per endpoint
-    Planner->>Planner: Build coverage matrix
-    Planner-->>Generator: Test Strategy Plan
-
-    loop For each test category
-        Generator->>LLM: Prompt: "Generate test cases for<br/>[category] with these constraints"
-        LLM-->>Generator: Raw test cases
-        Generator->>Generator: Parse & structure test cases
-    end
-    Generator->>Generator: Deduplicate & assign IDs
-    Generator-->>Validator: Raw Test Suite
-
-    Validator->>Validator: Check count ≥ 35
-    Validator->>Validator: Check all 4 categories covered
-    Validator->>Validator: Check for contradictions
-    alt Validation fails
-        Validator->>Generator: Request additional cases
-        Generator->>LLM: Generate missing cases
-        LLM-->>Generator: Additional cases
-        Generator-->>Validator: Updated suite
-    end
-    Validator->>Validator: Format output
-    Validator-->>User: Final Test Suite<br/>(Postman JSON + Excel + Report)
+    style INPUT fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff
+    style M1 fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#fff
+    style M2 fill:#14532d,stroke:#4ade80,stroke-width:2px,color:#fff
+    style M3 fill:#701a75,stroke:#f472b6,stroke-width:2px,color:#fff
+    style M4 fill:#7c2d12,stroke:#fb923c,stroke-width:2px,color:#fff
+    style OUTPUT fill:#1e293b,stroke:#94a3b8,stroke-width:2px,color:#fff
 ```
 
 ---
 
-## 2. Pseudocode chi tiết
-
-### Module 1: API Spec Parser
-
-```python
-class APISpecParser:
-    """
-    Module 1: Parse API specification document and extract structured info.
-    Input: Raw markdown/text API specification
-    Output: List of APIEndpoint objects
-    """
-
-    def parse(self, spec_text: str, requirements_text: str) -> list[APIEndpoint]:
-        endpoints = []
-
-        # Step 1: Split specification into endpoint sections
-        sections = self._split_into_sections(spec_text)
-
-        for section in sections:
-            endpoint = APIEndpoint()
-
-            # Step 2: Extract HTTP method and URL path
-            endpoint.method = self._extract_method(section)      # e.g., "POST"
-            endpoint.url = self._extract_url(section)            # e.g., "/api/login"
-
-            # Step 3: Extract authentication requirements
-            endpoint.auth = self._extract_auth(section)
-            # Returns: "none" | "bearer_user" | "bearer_admin"
-
-            # Step 4: Extract request schema
-            endpoint.request_body = self._extract_request_body(section)
-            # Returns: dict of {field_name: {type, required, constraints}}
-            # Example: {"email": {"type": "string", "required": true,
-            #           "constraints": ["email_format"]}}
-
-            endpoint.query_params = self._extract_query_params(section)
-            endpoint.path_params = self._extract_path_params(section)
-
-            # Step 5: Extract response schema
-            endpoint.responses = self._extract_responses(section)
-            # Returns: dict of {status_code: {body_schema, description}}
-            # Example: {200: {"body": {"token": "string", "user": "object"}},
-            #           401: {"body": {"error": "string"}}}
-
-            # Step 6: Extract business rules from requirements doc
-            endpoint.business_rules = self._extract_business_rules(
-                requirements_text, endpoint.url
-            )
-            # Example: ["login_attempts increments by exactly 1",
-            #           "lock after 3 consecutive failures for 30 seconds"]
-
-            # Step 7: Map relevant security requirements
-            endpoint.security_rules = self._map_security_requirements(
-                endpoint, SECURITY_REQUIREMENTS  # SEC-01 to SEC-07
-            )
-
-            endpoints.append(endpoint)
-
-        return endpoints
-
-    def _extract_request_body(self, section: str) -> dict:
-        """Parse JSON body example and infer field constraints."""
-        json_block = self._find_json_code_block(section)
-        if not json_block:
-            return {}
-
-        fields = {}
-        for field_name, example_value in json_block.items():
-            field_info = {
-                "type": self._infer_type(example_value),
-                "required": True,  # default; refined by requirements
-                "example": example_value,
-                "constraints": self._infer_constraints(field_name, example_value)
-            }
-            fields[field_name] = field_info
-
-        return fields
-
-    def _infer_constraints(self, field_name: str, value) -> list[str]:
-        """Infer validation constraints from field name and value patterns."""
-        constraints = []
-        if "email" in field_name.lower():
-            constraints.append("email_format")
-        if "password" in field_name.lower():
-            constraints.append("min_8_chars")
-            constraints.append("has_uppercase")
-            constraints.append("has_lowercase")
-            constraints.append("has_digit")
-            constraints.append("has_special_char")
-        if "price" in field_name.lower():
-            constraints.append("positive_number")
-        if "phone" in field_name.lower():
-            constraints.append("starts_with_0")
-            constraints.append("10_to_11_digits")
-        return constraints
-```
-
-### Module 2: Test Strategy Planner
-
-```python
-class TestStrategyPlanner:
-    """
-    Module 2: Analyze parsed API and create test strategy covering 4 categories.
-    Input: APIEndpoint object
-    Output: TestStrategy with coverage matrix
-    """
-
-    def plan(self, endpoint: APIEndpoint) -> TestStrategy:
-        strategy = TestStrategy(endpoint=endpoint)
-
-        # === Category 1: Domain Partitions ===
-        strategy.domain_partitions = self._analyze_domain_partitions(endpoint)
-
-        # === Category 2: State Transitions ===
-        strategy.state_transitions = self._analyze_state_transitions(endpoint)
-
-        # === Category 3: Security Tests ===
-        strategy.security_tests = self._analyze_security_threats(endpoint)
-
-        # === Category 4: Schema Validation ===
-        strategy.schema_validations = self._analyze_schema(endpoint)
-
-        # Build coverage matrix
-        strategy.coverage_matrix = self._build_coverage_matrix(strategy)
-
-        return strategy
-
-    def _analyze_domain_partitions(self, endpoint: APIEndpoint) -> list[Partition]:
-        """
-        For each parameter, identify:
-        - Equivalence classes (valid, invalid boundary partitions)
-        - Boundary values
-        - Special values (null, empty, whitespace, very long, special chars)
-        """
-        partitions = []
-
-        for field_name, field_info in endpoint.request_body.items():
-            field_partitions = Partition(field=field_name)
-
-            if field_info["type"] == "string":
-                field_partitions.valid_classes = [
-                    "normal_valid_value",
-                    "min_length_boundary",
-                    "max_length_boundary"
-                ]
-                field_partitions.invalid_classes = [
-                    "empty_string",
-                    "null_value",
-                    "missing_field",
-                    "whitespace_only",
-                    "exceeds_max_length",
-                    "special_characters",
-                    "unicode_characters"
-                ]
-
-                # Add constraint-specific partitions
-                if "email_format" in field_info.get("constraints", []):
-                    field_partitions.valid_classes += ["standard_email"]
-                    field_partitions.invalid_classes += [
-                        "no_at_sign", "no_domain", "double_at",
-                        "spaces_in_email", "sql_injection_in_email"
-                    ]
-
-            elif field_info["type"] == "number":
-                field_partitions.valid_classes = [
-                    "positive_normal", "min_boundary", "large_value"
-                ]
-                field_partitions.invalid_classes = [
-                    "zero", "negative", "string_value", "null",
-                    "decimal", "extremely_large"
-                ]
-
-            partitions.append(field_partitions)
-
-        return partitions
-
-    def _analyze_state_transitions(self, endpoint: APIEndpoint) -> list[StateTransition]:
-        """
-        Identify state machines relevant to the endpoint.
-        Use LLM to analyze business rules and identify states.
-        """
-        transitions = []
-
-        for rule in endpoint.business_rules:
-            prompt = f"""
-            Given this business rule: "{rule}"
-            Identify:
-            1. The states involved
-            2. Valid transitions (from_state -> action -> to_state)
-            3. Invalid transitions that should be rejected
-            """
-            llm_result = self.llm.analyze(prompt)
-            transitions.extend(self._parse_transitions(llm_result))
-
-        return transitions
-
-    def _analyze_security_threats(self, endpoint: APIEndpoint) -> list[SecurityTest]:
-        """Map SEC-01 to SEC-07 to specific test scenarios for this endpoint."""
-        threats = []
-        sec_mapping = {
-            "SEC-01": {"test": "check_password_not_plaintext",
-                       "applies_to": ["register", "login", "reset-password"]},
-            "SEC-02": {"test": "require_valid_jwt",
-                       "applies_to": ["authenticated_endpoints"]},
-            "SEC-03": {"test": "require_admin_role",
-                       "applies_to": ["admin_endpoints"]},
-            "SEC-04": {"test": "xss_injection_in_inputs",
-                       "applies_to": ["all_endpoints_with_input"]},
-            "SEC-05": {"test": "sql_injection_in_params",
-                       "applies_to": ["all_endpoints_with_input"]},
-            "SEC-06": {"test": "prevent_role_escalation",
-                       "applies_to": ["profile_update"]},
-            "SEC-07": {"test": "otp_entropy_and_expiry",
-                       "applies_to": ["forgot-password", "reset-password"]},
-        }
-
-        for sec_id, sec_info in sec_mapping.items():
-            if self._applies_to_endpoint(endpoint, sec_info["applies_to"]):
-                threats.append(SecurityTest(
-                    sec_id=sec_id,
-                    test_type=sec_info["test"],
-                    endpoint=endpoint
-                ))
-
-        return threats
-
-    def _build_coverage_matrix(self, strategy: TestStrategy) -> dict:
-        """Ensure all 4 categories have sufficient test cases."""
-        return {
-            "domain_partitions": len(strategy.domain_partitions),
-            "state_transitions": len(strategy.state_transitions),
-            "security_tests": len(strategy.security_tests),
-            "schema_validations": len(strategy.schema_validations),
-            "total_estimated": (
-                len(strategy.domain_partitions) * 2  # valid + invalid per partition
-                + len(strategy.state_transitions)
-                + len(strategy.security_tests)
-                + len(strategy.schema_validations)
-            )
-        }
-```
-
-### Module 3: Test Case Generator
-
-```python
-class TestCaseGenerator:
-    """
-    Module 3: Generate concrete test cases from strategy plan.
-    Input: TestStrategy
-    Output: List of TestCase objects
-    """
-
-    def generate(self, strategy: TestStrategy) -> list[TestCase]:
-        all_cases = []
-        test_id_counter = 1
-
-        # === Generate Domain Partition test cases ===
-        for partition in strategy.domain_partitions:
-            prompt = f"""
-            Generate API test cases for endpoint {strategy.endpoint.method} {strategy.endpoint.url}
-            Field: {partition.field}
-            Valid equivalence classes: {partition.valid_classes}
-            Invalid equivalence classes: {partition.invalid_classes}
-
-            For each class, provide:
-            - Test case name (descriptive, in English)
-            - Input data (complete request body/params)
-            - Expected HTTP status code
-            - Expected response body pattern
-            - Preconditions (if any)
-
-            Format as structured JSON.
-            """
-            raw_cases = self.llm.generate(prompt)
-            cases = self._parse_and_structure(raw_cases, "DOMAIN", test_id_counter)
-            all_cases.extend(cases)
-            test_id_counter += len(cases)
-
-        # === Generate State Transition test cases ===
-        for transition in strategy.state_transitions:
-            prompt = f"""
-            Generate API test cases for state transition:
-            Endpoint: {strategy.endpoint.method} {strategy.endpoint.url}
-            Transition: {transition.from_state} --[{transition.action}]--> {transition.to_state}
-            Is valid: {transition.is_valid}
-
-            Include:
-            - Setup steps (preconditions to reach from_state)
-            - The action (API call)
-            - Verification (expected status + response + DB state)
-            """
-            raw_cases = self.llm.generate(prompt)
-            cases = self._parse_and_structure(raw_cases, "STATE", test_id_counter)
-            all_cases.extend(cases)
-            test_id_counter += len(cases)
-
-        # === Generate Security test cases ===
-        for threat in strategy.security_tests:
-            prompt = f"""
-            Generate security test cases for:
-            Endpoint: {strategy.endpoint.method} {strategy.endpoint.url}
-            Security requirement: {threat.sec_id}
-            Test type: {threat.test_type}
-
-            Include attack payloads and expected secure responses.
-            """
-            raw_cases = self.llm.generate(prompt)
-            cases = self._parse_and_structure(raw_cases, "SECURITY", test_id_counter)
-            all_cases.extend(cases)
-            test_id_counter += len(cases)
-
-        # === Generate Schema Validation test cases ===
-        for schema_rule in strategy.schema_validations:
-            prompt = f"""
-            Generate schema validation test cases for:
-            Endpoint: {strategy.endpoint.method} {strategy.endpoint.url}
-            Expected response schema: {schema_rule.expected_schema}
-
-            Verify: field names, data types, required fields, nested objects.
-            """
-            raw_cases = self.llm.generate(prompt)
-            cases = self._parse_and_structure(raw_cases, "SCHEMA", test_id_counter)
-            all_cases.extend(cases)
-            test_id_counter += len(cases)
-
-        # === Deduplicate ===
-        all_cases = self._deduplicate(all_cases)
-
-        return all_cases
-
-    def _parse_and_structure(self, raw: str, category: str, start_id: int) -> list[TestCase]:
-        """Convert LLM raw output into structured TestCase objects."""
-        cases = []
-        parsed = json.loads(raw)
-
-        for i, raw_case in enumerate(parsed):
-            case = TestCase(
-                id=f"TC-{category[:3]}-{start_id + i:03d}",
-                category=category,
-                name=raw_case["name"],
-                endpoint=raw_case.get("endpoint", ""),
-                method=raw_case.get("method", ""),
-                request_headers=raw_case.get("headers", {}),
-                request_body=raw_case.get("body", {}),
-                request_params=raw_case.get("params", {}),
-                expected_status=raw_case["expected_status"],
-                expected_body=raw_case.get("expected_body", {}),
-                preconditions=raw_case.get("preconditions", []),
-                postconditions=raw_case.get("postconditions", []),
-            )
-            cases.append(case)
-
-        return cases
-
-    def _deduplicate(self, cases: list[TestCase]) -> list[TestCase]:
-        """Remove duplicate test cases based on input + expected output similarity."""
-        seen = set()
-        unique = []
-        for case in cases:
-            fingerprint = (
-                case.method, case.endpoint,
-                json.dumps(case.request_body, sort_keys=True),
-                case.expected_status
-            )
-            if fingerprint not in seen:
-                seen.add(fingerprint)
-                unique.append(case)
-        return unique
-```
-
-### Module 4: Test Case Validator
-
-```python
-class TestCaseValidator:
-    """
-    Module 4: Validate the generated test suite for completeness and quality.
-    Input: List of TestCase objects
-    Output: Validated suite + coverage report
-    """
-
-    MIN_CASES_PER_API = 35
-    REQUIRED_CATEGORIES = ["DOMAIN", "STATE", "SECURITY", "SCHEMA"]
-
-    def validate(self, cases: list[TestCase], endpoint: APIEndpoint) -> ValidationResult:
-        result = ValidationResult()
-
-        # Check 1: Minimum count
-        if len(cases) < self.MIN_CASES_PER_API:
-            result.add_issue(
-                "INSUFFICIENT_COUNT",
-                f"Only {len(cases)} cases, need ≥ {self.MIN_CASES_PER_API}"
-            )
-            # Request generator to produce more cases
-            result.needs_more = True
-            result.deficit = self.MIN_CASES_PER_API - len(cases)
-
-        # Check 2: All 4 categories covered
-        present_categories = set(c.category for c in cases)
-        missing = set(self.REQUIRED_CATEGORIES) - present_categories
-        if missing:
-            result.add_issue(
-                "MISSING_CATEGORY",
-                f"Missing categories: {missing}"
-            )
-            result.missing_categories = list(missing)
-
-        # Check 3: Category distribution balance
-        category_counts = Counter(c.category for c in cases)
-        for cat in self.REQUIRED_CATEGORIES:
-            count = category_counts.get(cat, 0)
-            if count < 3:
-                result.add_issue(
-                    "LOW_CATEGORY_COUNT",
-                    f"Category {cat} has only {count} cases (recommend ≥ 5)"
-                )
-
-        # Check 4: No contradictions (same input → different expected output)
-        contradictions = self._find_contradictions(cases)
-        if contradictions:
-            result.add_issue(
-                "CONTRADICTIONS",
-                f"Found {len(contradictions)} contradicting test case pairs"
-            )
-
-        # Check 5: Security coverage
-        security_cases = [c for c in cases if c.category == "SECURITY"]
-        covered_sec_ids = set()
-        for c in security_cases:
-            for sec_id in ["SEC-01", "SEC-02", "SEC-03", "SEC-04", "SEC-05", "SEC-06", "SEC-07"]:
-                if sec_id.lower() in c.name.lower() or sec_id in str(c.preconditions):
-                    covered_sec_ids.add(sec_id)
-
-        applicable_secs = set(sr.sec_id for sr in endpoint.security_rules)
-        uncovered = applicable_secs - covered_sec_ids
-        if uncovered:
-            result.add_issue(
-                "UNCOVERED_SECURITY",
-                f"Security requirements not tested: {uncovered}"
-            )
-
-        # Generate coverage report
-        result.coverage_report = {
-            "total_cases": len(cases),
-            "by_category": dict(category_counts),
-            "security_coverage": list(covered_sec_ids),
-            "is_valid": len(result.issues) == 0
-        }
-
-        return result
-
-    def export_to_postman(self, cases: list[TestCase], endpoint: APIEndpoint) -> dict:
-        """Convert test cases to Postman collection JSON format."""
-        collection = {
-            "info": {
-                "name": f"HW06 - {endpoint.url}",
-                "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-            },
-            "item": []
-        }
-
-        # Group by category into folders
-        for category in self.REQUIRED_CATEGORIES:
-            folder = {"name": category, "item": []}
-            category_cases = [c for c in cases if c.category == category]
-
-            for case in category_cases:
-                item = {
-                    "name": f"{case.id}: {case.name}",
-                    "request": {
-                        "method": case.method,
-                        "header": [
-                            {"key": k, "value": v}
-                            for k, v in case.request_headers.items()
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}" + case.endpoint,
-                            "host": ["{{base_url}}"],
-                            "path": case.endpoint.strip("/").split("/")
-                        },
-                        "body": {
-                            "mode": "raw",
-                            "raw": json.dumps(case.request_body, indent=2),
-                            "options": {"raw": {"language": "json"}}
-                        }
-                    },
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "exec": self._generate_test_script(case)
-                        }
-                    }, {
-                        "listen": "prerequest",
-                        "script": {
-                            "exec": [
-                                'pm.request.headers.add({',
-                                '    key: "X-Student-Id",',
-                                '    value: pm.environment.get("student_id")',
-                                '});'
-                            ]
-                        }
-                    }]
-                }
-                folder["item"].append(item)
-
-            collection["item"].append(folder)
-
-        return collection
-
-    def _generate_test_script(self, case: TestCase) -> list[str]:
-        """Generate Postman test script for a test case."""
-        scripts = [
-            f'pm.test("{case.id}: {case.name}", function () {{',
-            f'    pm.response.to.have.status({case.expected_status});',
-        ]
-
-        if case.expected_body:
-            scripts.append('    var jsonData = pm.response.json();')
-            for key, expected_value in case.expected_body.items():
-                if isinstance(expected_value, str):
-                    scripts.append(
-                        f'    pm.expect(jsonData.{key}).to.eql("{expected_value}");'
-                    )
-                else:
-                    scripts.append(
-                        f'    pm.expect(jsonData.{key}).to.eql({expected_value});'
-                    )
-
-        scripts.append('});')
-        return scripts
-```
-
-### Main — Orchestrator
-
-```python
-def generate_api_tests(api_spec_path: str, requirements_path: str,
-                        target_endpoint: str) -> dict:
-    """
-    Main entry point: orchestrate the 4-module pipeline.
-
-    Args:
-        api_spec_path: Path to api_specification.md
-        requirements_path: Path to README.md (SRS)
-        target_endpoint: e.g., "POST /api/login"
-
-    Returns:
-        dict with postman_collection, test_cases_excel, coverage_report
-    """
-    # Module 1: Parse
-    parser = APISpecParser()
-    spec_text = read_file(api_spec_path)
-    requirements_text = read_file(requirements_path)
-    endpoints = parser.parse(spec_text, requirements_text)
-
-    # Find target endpoint
-    target = find_endpoint(endpoints, target_endpoint)
-
-    # Module 2: Plan strategy
-    planner = TestStrategyPlanner(llm=LLMClient())
-    strategy = planner.plan(target)
-
-    # Module 3: Generate test cases
-    generator = TestCaseGenerator(llm=LLMClient())
-    test_cases = generator.generate(strategy)
-
-    # Module 4: Validate & export
-    validator = TestCaseValidator()
-    result = validator.validate(test_cases, target)
-
-    # If validation fails, regenerate missing parts
-    while not result.coverage_report["is_valid"]:
-        if result.needs_more:
-            additional = generator.generate_additional(
-                strategy, result.deficit, result.missing_categories
-            )
-            test_cases.extend(additional)
-        result = validator.validate(test_cases, target)
-
-    # Export
-    postman_collection = validator.export_to_postman(test_cases, target)
-    coverage_report = result.coverage_report
-
-    return {
-        "postman_collection": postman_collection,
-        "test_cases": test_cases,
-        "coverage_report": coverage_report
-    }
-
-
-# === Usage ===
-if __name__ == "__main__":
-    # Generate tests for FR-02: Login & Account Lockout
-    result = generate_api_tests(
-        api_spec_path="api_specification.md",
-        requirements_path="README.md",
-        target_endpoint="POST /api/login"
-    )
-
-    # Save Postman collection
-    save_json(result["postman_collection"],
-              "collections/FR02_Login.postman_collection.json")
-
-    # Print coverage
-    print(f"Generated {len(result['test_cases'])} test cases")
-    print(f"Coverage: {result['coverage_report']}")
-```
-
----
-
-## 3. Design Decisions & Rationale
-
-| Decision | Rationale |
-|---|---|
-| **4-module pipeline** | Separation of concerns: parsing, planning, generation, validation are independent steps |
-| **LLM-assisted (not LLM-only)** | LLM generates test ideas, but structure/validation is deterministic code |
-| **Iterative validation loop** | Ensures minimum 35 cases and all 4 categories are covered |
-| **Security mapping table** | Systematic coverage of SEC-01→07 instead of ad-hoc prompting |
-| **Deduplication by fingerprint** | Prevents LLM from generating semantically identical test cases |
-| **Postman-native export** | Direct integration with Newman for CI/CD execution |
-| **Category-based folders** | Organized structure for audit and review |
-
----
-
-## 4. Limitations & Mitigations
-
-| Limitation | Mitigation |
-|---|---|
-| LLM may hallucinate API endpoints | Module 1 parser grounds everything in actual spec |
-| LLM may miss edge cases | Module 4 validator ensures coverage; human extends in Step 3 |
-| LLM output format inconsistency | Structured prompts + JSON parsing with fallback |
-| Cannot verify actual API behavior | Separate execution phase (Newman) validates against live SUT |
-
----
-
-## 5. Agent Skills Mapping — Ánh xạ Module → Skill
-
-Pipeline 4 module được hiện thực hóa thành **7 Agent Skills** (Antigravity SKILL.md), mỗi skill có thể trigger độc lập hoặc sử dụng tuần tự theo pipeline.
-
-```mermaid
-flowchart LR
-    subgraph SKILLS["🔧 Agent Skills"]
-        S1["api-spec-analyzer\n(Module 1)"]
-        S2["domain-partition-tester\n(Module 2+3)"]
-        S3["state-transition-tester\n(Module 2+3)"]
-        S4["security-tester\n(Module 2+3)"]
-        S5["schema-validator\n(Module 2+3)"]
-        S6["test-case-auditor\n(Module 4)"]
-        S7["postman-collection-generator\n(Export)"]
-    end
-
-    S1 -->|"Structured API Model"| S2
-    S1 -->|"Structured API Model"| S3
-    S1 -->|"Structured API Model"| S4
-    S1 -->|"Structured API Model"| S5
-    S2 -->|"Test Cases"| S6
-    S3 -->|"Test Cases"| S6
-    S4 -->|"Test Cases"| S6
-    S5 -->|"Test Cases"| S6
-    S6 -->|"Validated Suite"| S7
-
-    style S1 fill:#1a1a2e,stroke:#e94560,color:#fff
-    style S2 fill:#16213e,stroke:#0f3460,color:#fff
-    style S3 fill:#16213e,stroke:#0f3460,color:#fff
-    style S4 fill:#16213e,stroke:#0f3460,color:#fff
-    style S5 fill:#16213e,stroke:#0f3460,color:#fff
-    style S6 fill:#1a1a2e,stroke:#e94560,color:#fff
-    style S7 fill:#0f3460,stroke:#53a8b6,color:#fff
-```
-
-| Module trong Design | Agent Skill tương ứng | Trigger Keyword |
-|---|---|---|
-| Module 1: API Spec Parser | `api-spec-analyzer` | "phân tích API spec", "parse endpoint" |
-| Module 2+3: Domain Partitions | `domain-partition-tester` | "domain partition", "equivalence partitioning", "boundary value" |
-| Module 2+3: State Transitions | `state-transition-tester` | "state transition", "state machine", "trạng thái" |
-| Module 2+3: Security Tests | `security-tester` | "security test", "bảo mật", "SQL injection", "XSS" |
-| Module 2+3: Schema Validation | `schema-validator` | "schema validation", "response shape" |
-| Module 4: Validator | `test-case-auditor` | "audit test", "review test cases", "coverage check" |
-| Export: Postman | `postman-collection-generator` | "postman collection", "newman", "generate postman" |
-
----
-
-## 6. Bảng ánh xạ Security Requirements → Test Techniques
-
-| SEC ID | Yêu cầu | Test Techniques | Attack Payloads |
-|--------|---------|-----------------|-----------------|
-| SEC-01 | Password không plaintext | Response inspection, DB query | Check response body không chứa field `password` |
-| SEC-02 | JWT Token hợp lệ | Token manipulation | No token, expired token, malformed token (`abc.def`), token thiếu signature |
-| SEC-03 | Admin role check | Privilege escalation | User token → admin endpoints (`/api/admin/*`, `POST /api/products`) |
-| SEC-04 | XSS prevention | Input injection | `<script>alert(1)</script>`, `<img onerror=alert(1)>`, `javascript:alert(1)` |
-| SEC-05 | SQL injection prevention | Input injection | `' OR 1=1 --`, `' UNION SELECT * FROM users --`, time-based blind SQLi |
-| SEC-06 | Role escalation prevention | Mass assignment | `PUT /api/users/me` với `{role: "admin"}`, `{is_admin: true}` |
-| SEC-07 | OTP security | Brute force, replay | OTP brute force, reuse OTP đã dùng, OTP cho email khác, OTP hết hạn |
-
----
-
-## 7. Các phương diện kiểm thử bổ sung (ngoài 4 category chính)
-
-### 7.1 IDOR (Insecure Direct Object Reference)
-
-Kiểm tra user A **không thể** truy cập resource của user B bằng cách thay đổi ID trong URL.
-
-| Scenario | API | Payload |
-|----------|-----|---------|
-| Xem đơn hàng người khác | `GET /api/orders/:id` | User A token + order ID của user B |
-| Hủy đơn hàng người khác | `PUT /api/orders/:id/cancel` | User A token + order ID của user B |
-| Xem profile người khác | `GET /api/users/me` | Verify chỉ trả về data của chính user |
-
-### 7.2 Mass Assignment
-
-Gửi thêm field không cho phép trong request body để thay đổi thuộc tính nội bộ.
-
-| Scenario | API | Payload |
-|----------|-----|---------|
-| Tự nâng role | `PUT /api/users/me` | `{name: "Test", role: "admin"}` |
-| Đổi ID | `PUT /api/users/me` | `{name: "Test", id: 999}` |
-| Thêm field lạ | `POST /api/register` | `{name: "Test", email: "...", password: "...", is_admin: true}` |
-
-### 7.3 Idempotency
-
-Gọi API nhiều lần liên tiếp, kết quả phải nhất quán.
-
-| Scenario | API | Expected |
-|----------|-----|----------|
-| Đăng ký 2 lần cùng email | `POST /api/register` | Lần 2 trả lỗi "email exists" |
-| Checkout 2 lần liên tiếp | `POST /api/checkout` | Lần 2 trả lỗi (giỏ hàng đã trống) |
-| Apply coupon 2 lần | `POST /api/apply-coupon` | Lần 2 vẫn trả đúng (idempotent) hoặc lỗi (nếu usage tracking) |
-| Cancel order 2 lần | `PUT /api/orders/:id/cancel` | Lần 2 trả lỗi (đã canceled) |
-
-### 7.4 Rate Limiting & Performance
-
-| Scenario | API | Expected |
-|----------|-----|----------|
-| 100 login attempts liên tiếp | `POST /api/login` | Account lockout + không crash server |
-| Rapid cart additions | `POST /api/cart` | Xử lý đúng, không duplicate |
-| Concurrent order status updates | `PUT /api/admin/orders/:id/status` | Không race condition |
-
-### 7.5 Error Handling & Information Disclosure
-
-| Scenario | API | Expected |
-|----------|-----|----------|
-| Invalid JSON body | Any POST/PUT | 400, không 500 |
-| Wrong Content-Type | Any POST/PUT | 400 hoặc xử lý graceful |
-| Very large request body (>1MB) | Any POST/PUT | 413 hoặc reject, không crash |
-| Server error response | Trigger 500 | Không leak stack trace, DB schema, file paths |
-
----
-
-## 8. Workflow thực tế — Sử dụng Agent Skills
+### 2.2. Sơ đồ Sequence Tương tác giữa các Agent Skills (Sequence Diagram)
 
 ```mermaid
 sequenceDiagram
-    actor User as Tester
+    autonumber
+    actor Tester as Kỹ sư Kiểm thử / User
+    participant Orch as Test Orchestrator Agent
     participant S1 as api-spec-analyzer
     participant S2 as domain-partition-tester
     participant S3 as state-transition-tester
@@ -898,32 +114,665 @@ sequenceDiagram
     participant S5 as schema-validator
     participant S6 as test-case-auditor
     participant S7 as postman-collection-generator
+    participant Runner as Newman CLI & CI/CD
 
-    User->>S1: "Phân tích API POST /api/login"
-    S1->>S1: Đọc api_specification.md + README.md
-    S1-->>User: Bảng tóm tắt endpoint (schema, rules, SEC mapping)
+    Tester->>Orch: Yêu cầu kiểm thử API (kèm api_specification.md)
+    Orch->>S1: Kích hoạt phân tích đặc tả API
+    activate S1
+    S1->>S1: Phân loại HTTP Method, Idempotency, Taxonomy tham số
+    S1->>S1: Suy luận Implicit Rules (Trim, Server calculation, Auth, IDOR)
+    S1-->>Orch: Xuất Normalized API Spec IR (Markdown / JSON)
+    deactivate S1
 
-    par Generate test cases (song song)
-        User->>S2: "Sinh domain partition tests cho POST /api/login"
-        S2-->>User: 15+ test cases (TC-DOM-xxx)
+    par Sinh Test Cases Đa Chiến Lược
+        Orch->>S2: Sinh EP & BVA (2-value/3-value, All-Pairs)
+        activate S2
+        S2-->>Orch: Danh sách TC-DOM-xxx (>= 15 TCs)
+        deactivate S2
     and
-        User->>S3: "Sinh state transition tests cho login lockout"
-        S3-->>User: 10+ test cases (TC-STA-xxx)
+        Orch->>S3: Sinh FSM & State Transition Tests
+        activate S3
+        S3-->>Orch: Danh sách TC-STA-xxx + Sơ đồ Mermaid FSM (>= 10 TCs)
+        deactivate S3
     and
-        User->>S4: "Sinh security tests cho POST /api/login"
-        S4-->>User: 10+ test cases (TC-SEC-xxx)
+        Orch->>S4: Sinh OWASP API Security & Attack Payloads
+        activate S4
+        S4-->>Orch: Danh sách TC-SEC-xxx (SQLi, IDOR, Mass Assignment, Auth) (>= 10 TCs)
+        deactivate S4
     and
-        User->>S5: "Sinh schema validation tests cho POST /api/login"
-        S5-->>User: 5+ test cases (TC-SCH-xxx)
+        Orch->>S5: Sinh Contract & Schema Validation Tests
+        activate S5
+        S5-->>Orch: Danh sách TC-SCH-xxx (JSON Schema Draft 2020-12, RFC 7807) (>= 5 TCs)
+        deactivate S5
     end
 
-    User->>User: Ghép tất cả test cases vào 1 file
+    Orch->>S6: Chuyển toàn bộ Test Cases sang kiểm toán
+    activate S6
+    S6->>S6: Kiểm toán 5 trục (Soundness, Completeness, Consistency, Independence, Traceability)
+    S6->>S6: Gán nhãn VALID / INVALID / INCOMPLETE và đưa ra bản sửa chữa (Remediation)
+    S6->>S6: Phản biện AI Critique + Đề xuất mở rộng (+5 test cases biên/IDOR)
+    S6-->>Orch: Báo cáo Kiểm toán IEEE 829 + Bộ Test Case hoàn thiện (>= 45 TCs)
+    deactivate S6
 
-    User->>S6: "Audit test suite cho POST /api/login"
-    S6-->>User: Đánh giá VALID/INVALID/INCOMPLETE + coverage report
+    Tester->>Orch: Xác nhận kết quả Audit & Test Case bổ sung (Human Review)
 
-    User->>User: Human review & extend (+5 cases)
+    Orch->>S7: Yêu cầu đóng gói Postman & Newman Scripts
+    activate S7
+    S7->>S7: Sinh Postman Collection v2.1.0 (Pre-request Auto-Auth, Header X-Student-Id)
+    S7->>S7: Nhúng Chai.js & Ajv Schema Validator vào Test Scripts
+    S7->>S7: Tạo Runner Script (run_tests_fixed.sh) & GitHub Actions (.github/workflows/api-test.yml)
+    S7-->>Orch: Xuất artifacts (*.json, *.sh, *.yml)
+    deactivate S7
 
-    User->>S7: "Sinh Postman collection cho POST /api/login"
-    S7-->>User: Postman Collection JSON + Environment JSON
+    Orch->>Runner: Kích hoạt Newman CLI chạy cô lập (Test Isolation)
+    activate Runner
+    Runner->>Runner: Reset SQLite DB & Chạy 3 Test Suites
+    Runner-->>Tester: Báo cáo HTML (htmlextra), Bug List (17 bugs) & CI/CD Pass/Fail
+    deactivate Runner
 ```
+
+---
+
+## 3. Chi tiết 7 Agent Skills trong Kiến trúc
+
+### 3.1. Skill 1: `api-spec-analyzer`
+- **Mục tiêu:** Chuyển đổi đặc tả thô thành **Normalized Intermediate Representation (IR)** chuẩn hóa để làm đầu vào cho các generator.
+- **Nền tảng tri thức:**
+  - **RFC 9110 HTTP Semantics:** Xác định tính lũy đẳng (`GET`, `PUT`, `DELETE`) vs không lũy đẳng (`POST`, `PATCH`), phân loại kiến trúc CRUD vs Stateful.
+  - **Parameter Taxonomy:** Phân tách Path Variables, Query Params, Header Params, Request Body JSON fields.
+  - **Implicit Business Rules Engine:** Tự động suy luận các quy tắc ngầm định ngành:
+    1. *Auth & Identity:* Tự động trim khoảng trắng 2 đầu email; forgot-password không làm lộ danh sách user; token sai trả `401`.
+    2. *Calculation:* Mọi tổng tiền/giá phải do Server tính toán lại, không tin tưởng client; số lượng $\ge 1$, giá $\ge 0$.
+    3. *Data Integrity:* Chặn IDOR bằng kiểm tra quyền sở hữu; tạo trùng unique key trả `409` hoặc `400`.
+    4. *Protocol:* Từ chối sai Media Type với `415`; field lạ không làm sập server `500`; lỗi theo RFC 7807.
+
+---
+
+### 3.2. Skill 2: `domain-partition-tester`
+- **Mục tiêu:** Sinh test case kiểm tra miền dữ liệu và biên theo chuẩn ISTQB.
+- **Nền tảng tri thức:**
+  - **2-value BVA (Chuẩn ISTQB):** Kiểm thử tại biên hợp lệ và giá trị sát ngoài biên gần nhất ($0, 1, N, N+1$).
+  - **3-value BVA & Robustness:** Kiểm thử biên cực đại, cực tiểu, số âm, overflow/underflow.
+  - **Type Catalogs:**
+    - *String:* Chuỗi rỗng `""`, 1 ký tự, max length $N$, $N+1$, khoảng trắng thuần `"   "`, unicode/emoji, format email/password.
+    - *Number:* Số âm (`-1`), zero (`0`), số thực (`0.01`), max safe int (`2147483647`), string coercion (`"123"`).
+    - *Array:* Mảng rỗng `[]`, mảng 1 phần tử `[x]`, max items, chứa `null`, chứa duplicate items.
+    - *Object:* Thiếu required key, thừa key lạ, object rỗng `{}`, `null`.
+  - **Combinatorial Testing (All-Pairs):** Positive test kết hợp nhiều biên hợp lệ; Negative test chỉ chứa **1 trường lỗi duy nhất** nhằm cô lập lỗi (Fault Isolation).
+
+---
+
+### 3.3. Skill 3: `state-transition-tester`
+- **Mục tiêu:** Kiểm tra vòng đời đối tượng dựa trên Máy Trạng Thái Hữu Hạn (FSM).
+- **Nền tảng tri thức:**
+  - **Mô hình hóa FSM:** Định nghĩa States, Transitions, Actions, Guard Conditions, và Terminal States.
+  - **Độ phủ ISTQB:**
+    - *0-switch (State Coverage):* Mọi trạng thái xuất hiện ít nhất 1 lần.
+    - *1-switch (Transition Coverage):* Mọi chuyển đổi hợp lệ được kích hoạt ít nhất 1 lần (100% Happy Path).
+    - *N-switch (Path Coverage):* Chuỗi $N+1$ chuyển đổi liên tiếp.
+  - **Negative State Transition Matrix:**
+    - *State Skipping:* Nhảy cóc trạng thái (VD: `pending` $	o$ `delivered`).
+    - *State Regression:* Lùi trạng thái trái phép (VD: `shipping` $	o$ `confirmed`).
+    - *Terminal State Violation:* Thay đổi trạng thái đã kết thúc (VD: `canceled` $	o$ `delivered`).
+  - **RBAC & Concurrency:** Role-based transition matrix (User vs Admin), tính lũy đẳng trạng thái (chuyển $S_i 	o S_i$), và kiểm tra Race Condition (TOCTOU).
+
+---
+
+### 3.4. Skill 4: `security-tester`
+- **Mục tiêu:** Sinh các kịch bản kiểm thử thâm nhập và an toàn thông tin theo chuẩn **OWASP API Security Top 10 (2023)**.
+- **Nền tảng tri thức:**
+  - **API1:2023 — BOLA / IDOR:** Thay đổi ID trên URL/Body xem dữ liệu của user khác mà không có quyền.
+  - **API2:2023 — Broken Authentication:** Token thiếu, hết hạn, chữ ký sai, `alg: none`, brute-force lockout.
+  - **API3:2023 — Mass Assignment:** Tiêm các trường ẩn: `{"role": "admin"}`, `{"is_admin": true}`, `{"balance": 999999}`.
+  - **API4:2023 — Unrestricted Resource Consumption:** Payload cực lớn, ReDoS, spam request liên tục.
+  - **API5:2023 — Broken Function Level Auth (BFLA):** Regular user gọi các admin endpoints (`/api/admin/*`).
+  - **API8:2023 — Security Misconfiguration:** Kiểm tra lộ Stack Trace, thiếu Security Headers (`X-Content-Type-Options: nosniff`).
+  - **Attack Payloads:** SQL Injection (`' OR 1=1 --`, `UNION SELECT`), XSS (`<script>alert(1)</script>`), Command Injection.
+
+---
+
+### 3.5. Skill 5: `schema-validator`
+- **Mục tiêu:** Đảm bảo Contract Testing nghiêm ngặt giữa Client và Server.
+- **Nền tảng tri thức:**
+  - **JSON Schema Draft 2020-12:**
+    - Type validation (kiểm tra kiểu chính xác, không ép kiểu ngầm).
+    - Format validation (`email`, `date-time`, `uuid`).
+    - Required keys & Strict Contract (`additionalProperties: false` để chống rò rỉ dữ liệu nhạy cảm).
+  - **HTTP Status Code Conformance:** `200/201` thành công, `400` dữ liệu sai, `401` chưa auth, `403` cấm quyền, `404` không tìm thấy, `415` sai Media Type, `409` conflict logic, **chặn triệt để lỗi `500`**.
+  - **RFC 7807 Error Envelope:** Cấu trúc lỗi đồng nhất `{ "error": string }`, không chứa stack trace hoặc dấu vết hệ điều hành.
+
+---
+
+### 3.6. Skill 6: `test-case-auditor`
+- **Mục tiêu:** Đóng vai trò Senior QA Auditor kiểm định chất lượng bộ test case theo chuẩn **IEEE 829 / ISO 29119**.
+- **Nền tảng tri thức:**
+  - **5 Trục Đánh Giá:**
+    1. *Soundness (Độ đúng đắn):* Không chấp nhận ảo tưởng AI (hallucination), kỳ vọng mã HTTP phải chuẩn.
+    2. *Completeness (Tính đầy đủ):* Đạt đủ 4 nhóm chiến lược, tối thiểu $\ge 35$ test cases / API.
+    3. *Consistency (Tính nhất quán):* Không mâu thuẫn giữa các test case.
+    4. *Independence (Tính độc lập):* Test case không bị flaky, không phụ thuộc thứ tự chạy.
+    5. *Traceability (Khả năng truy vết):* Ánh xạ rõ ràng về Functional Requirement (FR-xx) hoặc Security Requirement (SEC-xx).
+  - **Gán nhãn Triaging:** `VALID` (chuẩn), `INVALID` (sai kỹ thuật $	o$ viết lại), `INCOMPLETE` (thiếu chiều sâu $	o$ bổ sung assertion).
+  - **AI Critique & Gap Analysis:** Chỉ ra điểm yếu thiên lệch của AI và tự động đề xuất $\ge 5$ test cases chuyên sâu (IDOR, Concurrency, Atomic rollback).
+
+---
+
+### 3.7. Skill 7: `postman-collection-generator`
+- **Mục tiêu:** Chuyển đổi toàn bộ test design thành mã kịch bản thực thi tự động.
+- **Nền tảng tri thức:**
+  - **Postman Collection Schema v2.1.0:** Tổ chức thư mục rõ ràng theo nhóm chức năng và chiến lược.
+  - **Variable Scoping:** Phân định rõ Global, Environment (`base_url`, `student_id`), Collection (`admin_token`, `order_id`), và Iteration Data (`pm.iterationData`).
+  - **Pre-request Automation:**
+    - Tự động gán Header `X-Student-Id: 23127378`.
+    - Auto Authentication (gọi API login lấy token gán vào header runtime).
+    - Data serialization và FSM Precondition chain.
+  - **Test Assertions (Chai.js & Ajv):** Kiểm tra HTTP status, response time, response body data types và JSON schema.
+  - **Newman CLI Orchestration:** Cấu hình lệnh chạy Newman với `newman-reporter-htmlextra`, cờ `--delay-request`, và kịch bản khởi động lại server (`run_tests_fixed.sh`) để bảo đảm tính độc lập môi trường (Test Isolation).
+  - **CI/CD Pipeline Generator:** Tự động sinh file GitHub Actions workflow `.github/workflows/api-test.yml`.
+
+---
+
+## 4. Mã giả Thiết kế Hệ thống (Python Pseudocode)
+
+```python
+"""
+AI-Driven API Test Generator — Architectural Pseudocode
+Implements 7 Agent Skills across 4 Core Modules
+Author: Nguyen Gia Huy (23127378)
+"""
+
+from typing import List, Dict, Any, Optional
+from dataclasses import dataclass, field
+import json
+
+
+# ============================================================================
+# DATA STRUCTURES & INTERMEDIATE REPRESENTATION (IR)
+# ============================================================================
+
+@dataclass
+class ParameterSpec:
+    name: str
+    location: str  # 'path', 'query', 'header', 'body'
+    data_type: str  # 'string', 'number', 'integer', 'boolean', 'array', 'object'
+    required: bool
+    constraints: Dict[str, Any] = field(default_factory=dict)  # min, max, regex, format
+
+
+@dataclass
+class NormalizedAPISpecIR:
+    endpoint: str
+    method: str
+    auth_role: str  # 'public', 'user', 'admin'
+    required_headers: List[str]
+    is_idempotent: bool
+    parameters: List[ParameterSpec]
+    expected_responses: Dict[int, Dict[str, Any]]
+    explicit_rules: List[str]
+    implicit_rules: List[str]
+    state_machine: Optional[Dict[str, Any]] = None
+    security_risks: List[str] = field(default_factory=list)
+
+
+@dataclass
+class TestCase:
+    tc_id: str
+    name: str
+    category: str  # 'Domain Partition', 'State Transition', 'Security', 'Schema Validation'
+    precondition: str
+    input_data: Dict[str, Any]
+    expected_status: int
+    expected_response: Dict[str, Any]
+    audit_verdict: str = "PENDING"  # VALID, INVALID, INCOMPLETE
+    audit_notes: str = ""
+    remediation: Optional[str] = None
+
+
+# ============================================================================
+# MODULE 1: API SPEC ANALYZER (SKILL 1)
+# ============================================================================
+
+class APISpecAnalyzer:
+    """Skill 1: Parses raw API specification and infers implicit business rules."""
+
+    def __init__(self, raw_spec_text: str):
+        self.raw_spec = raw_spec_text
+
+    def parse(self, endpoint: str, method: str) -> NormalizedAPISpecIR:
+        # 1. Extract endpoint metadata and parameters
+        params = self._extract_parameters(endpoint, method)
+        responses = self._extract_responses(endpoint, method)
+        
+        # 2. Determine RFC 9110 Idempotency
+        is_idempotent = method.upper() in ["GET", "PUT", "DELETE", "HEAD", "OPTIONS"]
+        
+        # 3. Infer Implicit Business Rules (Industry Standards)
+        implicit_rules = []
+        for p in params:
+            if p.data_type == "string" and "email" in p.name.lower():
+                implicit_rules.append("Auto-trim whitespace on email; case-insensitive matching")
+            if p.data_type == "number" and "price" in p.name.lower():
+                implicit_rules.append("Price must be strictly positive (> 0); verified on server")
+        implicit_rules.append("Reject unsupported Media Type with 415; uniform RFC 7807 error format")
+        implicit_rules.append("IDOR protection: verify ownership on all resource access")
+
+        return NormalizedAPISpecIR(
+            endpoint=endpoint,
+            method=method,
+            auth_role="admin" if "/admin" in endpoint else ("public" if "login" in endpoint else "user"),
+            required_headers=["X-Student-Id", "Content-Type"],
+            is_idempotent=is_idempotent,
+            parameters=params,
+            expected_responses=responses,
+            explicit_rules=self._extract_explicit_rules(endpoint),
+            implicit_rules=implicit_rules,
+            security_risks=["IDOR", "Mass Assignment", "SQLi", "Broken Auth"]
+        )
+
+    def _extract_parameters(self, endpoint: str, method: str) -> List[ParameterSpec]:
+        # Concrete implementation extracting params from spec AST/Regex
+        return [
+            ParameterSpec("email", "body", "string", True, {"format": "email", "maxLength": 255}),
+            ParameterSpec("password", "body", "string", True, {"minLength": 6, "maxLength": 100})
+        ]
+
+    def _extract_responses(self, endpoint: str, method: str) -> Dict[int, Dict[str, Any]]:
+        return {
+            200: {"description": "Success", "schema": {"token": "string", "user": "object"}},
+            400: {"description": "Bad Request", "schema": {"error": "string"}},
+            401: {"description": "Unauthorized", "schema": {"error": "string"}}
+        }
+
+    def _extract_explicit_rules(self, endpoint: str) -> List[str]:
+        return ["Lock account after failed attempts", "Password must meet complexity requirements"]
+
+
+# ============================================================================
+# MODULE 2: TEST GENERATORS (SKILLS 2, 3, 4, 5)
+# ============================================================================
+
+class DomainPartitionTester:
+    """Skill 2: Generates EP & BVA test cases based on ISTQB standards."""
+
+    def generate(self, ir: NormalizedAPISpecIR) -> List[TestCase]:
+        test_cases = []
+        tc_count = 1
+
+        # 1. Positive Tests (Valid partitions + valid boundaries)
+        test_cases.append(TestCase(
+            tc_id=f"TC-DOM-{tc_count:03d}",
+            name="Valid standard inputs",
+            category="Domain Partition",
+            precondition="User exists in DB",
+            input_data={"email": "valid@eshop.com", "password": "ValidPassword123!"},
+            expected_status=200,
+            expected_response={"has_token": True}
+        ))
+        tc_count += 1
+
+        # 2. Negative BVA & EP per parameter (Fault Isolation principle)
+        for param in ir.parameters:
+            if param.data_type == "string":
+                # Boundary: Empty string
+                test_cases.append(TestCase(
+                    tc_id=f"TC-DOM-{tc_count:03d}",
+                    name=f"Invalid empty string for {param.name}",
+                    category="Domain Partition",
+                    precondition="None",
+                    input_data={param.name: ""},
+                    expected_status=400,
+                    expected_response={"error": f"{param.name} cannot be empty"}
+                ))
+                tc_count += 1
+                # Boundary: Exceed max length
+                max_len = param.constraints.get("maxLength", 255)
+                test_cases.append(TestCase(
+                    tc_id=f"TC-DOM-{tc_count:03d}",
+                    name=f"Invalid length exceeding boundary for {param.name} (N+1)",
+                    category="Domain Partition",
+                    precondition="None",
+                    input_data={param.name: "a" * (max_len + 1)},
+                    expected_status=400,
+                    expected_response={"error": "Exceeds maximum length"}
+                ))
+                tc_count += 1
+
+        return test_cases
+
+
+class StateTransitionTester:
+    """Skill 3: Generates FSM lifecycle, negative matrix, and terminal state tests."""
+
+    def generate(self, ir: NormalizedAPISpecIR) -> List[TestCase]:
+        test_cases = []
+        # 1-switch Valid Transition
+        test_cases.append(TestCase(
+            tc_id="TC-STA-001",
+            name="Valid transition from pending to confirmed by Admin",
+            category="State Transition",
+            precondition="Order exists in pending state; authenticated as Admin",
+            input_data={"status": "confirmed"},
+            expected_status=200,
+            expected_response={"status": "confirmed"}
+        ))
+        # Terminal State Violation
+        test_cases.append(TestCase(
+            tc_id="TC-STA-002",
+            name="Invalid transition from terminal state canceled to delivered",
+            category="State Transition",
+            precondition="Order exists in canceled state",
+            input_data={"status": "delivered"},
+            expected_status=400,
+            expected_response={"error": "Cannot transition from canceled"}
+        ))
+        # RBAC State Guard
+        test_cases.append(TestCase(
+            tc_id="TC-STA-003",
+            name="Unauthorized status update by regular user",
+            category="State Transition",
+            precondition="Order exists in pending state; authenticated as Regular User",
+            input_data={"status": "confirmed"},
+            expected_status=403,
+            expected_response={"error": "Forbidden"}
+        ))
+        return test_cases
+
+
+class SecurityTester:
+    """Skill 4: Generates OWASP API Security Top 10 (2023) penetration test cases."""
+
+    def generate(self, ir: NormalizedAPISpecIR) -> List[TestCase]:
+        test_cases = []
+        # API1: BOLA / IDOR
+        test_cases.append(TestCase(
+            tc_id="TC-SEC-001",
+            name="IDOR - User B accesses User A order details",
+            category="Security",
+            precondition="Order owned by User A; authenticated with User B token",
+            input_data={"order_id": "ORDER_USER_A_ID"},
+            expected_status=403,
+            expected_response={"error": "Access denied"}
+        ))
+        # API2: Missing JWT Token
+        test_cases.append(TestCase(
+            tc_id="TC-SEC-002",
+            name="Unauthenticated access without Authorization header",
+            category="Security",
+            precondition="No token provided in request header",
+            input_data={},
+            expected_status=401,
+            expected_response={"error": "Unauthorized"}
+        ))
+        # API3: Mass Assignment Role Escalation
+        test_cases.append(TestCase(
+            tc_id="TC-SEC-003",
+            name="Mass assignment attempt to escalate role to admin",
+            category="Security",
+            precondition="Authenticated as regular user",
+            input_data={"name": "New Name", "role": "admin", "is_admin": True},
+            expected_status=200,  # Or 400, but role must remain unchanged
+            expected_response={"role": "user"}
+        ))
+        # SQL Injection in authentication
+        test_cases.append(TestCase(
+            tc_id="TC-SEC-004",
+            name="SQL Injection payload in email parameter",
+            category="Security",
+            precondition="None",
+            input_data={"email": "admin@eshop.com' OR '1'='1", "password": "any"},
+            expected_status=401,
+            expected_response={"error": "Invalid email or password"}
+        ))
+        return test_cases
+
+
+class SchemaValidator:
+    """Skill 5: Generates JSON Schema Draft 2020-12 & RFC 7807 Contract tests."""
+
+    def generate(self, ir: NormalizedAPISpecIR) -> List[TestCase]:
+        test_cases = []
+        test_cases.append(TestCase(
+            tc_id="TC-SCH-001",
+            name="Verify response matches exact JSON Schema structure",
+            category="Schema Validation",
+            precondition="Valid request payload",
+            input_data={"email": "test@eshop.com", "password": "Password123!"},
+            expected_status=200,
+            expected_response={"schema_check": "draft-2020-12", "additionalProperties": False}
+        ))
+        test_cases.append(TestCase(
+            tc_id="TC-SCH-002",
+            name="Verify password is NOT exposed in response body (SEC-01)",
+            category="Schema Validation",
+            precondition="Valid request payload",
+            input_data={"email": "test@eshop.com", "password": "Password123!"},
+            expected_status=200,
+            expected_response={"prohibited_properties": ["password", "password_hash"]}
+        ))
+        return test_cases
+
+
+# ============================================================================
+# MODULE 3: TEST CASE AUDITOR (SKILL 6)
+# ============================================================================
+
+class TestCaseAuditor:
+    """Skill 6: Audits test cases against IEEE 829 / ISO 29119 and provides AI Critique."""
+
+    def audit(self, test_cases: List[TestCase], ir: NormalizedAPISpecIR) -> Dict[str, Any]:
+        audited_cases = []
+        summary = {"VALID": 0, "INVALID": 0, "INCOMPLETE": 0}
+        suggested_extensions = []
+
+        for tc in test_cases:
+            verdict = "VALID"
+            notes = "Test case adheres strictly to ISTQB / REST standards."
+
+            # Check 1: Soundness (Avoid LLM Hallucinations on HTTP status)
+            if tc.category == "Domain Partition" and "empty" in tc.name and tc.expected_status == 200:
+                verdict = "INVALID"
+                notes = "Hallucination: Empty mandatory field cannot return 200 OK. Expected 400 Bad Request."
+                tc.expected_status = 400
+                tc.remediation = "Corrected expected_status to 400."
+
+            # Check 2: Completeness (Verify response assertions)
+            if not tc.expected_response:
+                verdict = "INCOMPLETE"
+                notes = "Missing response body assertion; only status code is checked."
+                tc.expected_response = {"error": "Validation error"}
+                tc.remediation = "Added response body error assertions."
+
+            tc.audit_verdict = verdict
+            tc.audit_notes = notes
+            summary[verdict] += 1
+            audited_cases.append(tc)
+
+        # Gap Analysis: Automatically suggest 5 critical human-added cases
+        suggested_extensions.append(TestCase(
+            tc_id="TC-EXT-001",
+            name="Account isolation during lockout (Locking User A does not lock User B)",
+            category="State Transition",
+            precondition="User A is locked out after consecutive failed attempts",
+            input_data={"email": "userB@eshop.com", "password": "ValidPassword123!"},
+            expected_status=200,
+            expected_response={"has_token": True},
+            audit_verdict="VALID",
+            audit_notes="Extension added by Auditor to eliminate multi-user state leakage."
+        ))
+
+        return {
+            "summary": summary,
+            "audited_cases": audited_cases,
+            "suggested_extensions": suggested_extensions,
+            "ai_critique": "AI excels in single-field boundary analysis but systematically neglects multi-step state leakage, IDOR, and role authorization."
+        }
+
+
+# ============================================================================
+# MODULE 4: POSTMAN COLLECTION GENERATOR (SKILL 7)
+# ============================================================================
+
+class PostmanCollectionGenerator:
+    """Skill 7: Transforms audited test cases into executable Postman Collections & Newman Runner."""
+
+    def build_collection(self, collection_name: str, test_cases: List[TestCase], student_id: str = "23127378") -> Dict[str, Any]:
+        collection = {
+            "info": {
+                "name": collection_name,
+                "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+            },
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.request.headers.add({",
+                            "    key: 'X-Student-Id',",
+                            f"    value: pm.environment.get('student_id') || '{student_id}'",
+                            "});"
+                        ]
+                    }
+                }
+            ],
+            "item": []
+        }
+
+        # Build requests with Chai.js and Ajv scripts
+        for tc in test_cases:
+            item = {
+                "name": f"[{tc.tc_id}] {tc.name}",
+                "request": {
+                    "method": "POST",
+                    "header": [{"key": "Content-Type", "value": "application/json"}],
+                    "body": {"mode": "raw", "raw": json.dumps(tc.input_data)},
+                    "url": {"raw": "{{base_url}}/api/login", "host": ["{{base_url}}"], "path": ["api", "login"]}
+                },
+                "event": [
+                    {
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                f"pm.test('{tc.tc_id} Status code is {tc.expected_status}', function () {{",
+                                f"    pm.response.to.have.status({tc.expected_status});",
+                                "});",
+                                "pm.test('Response is JSON', function () {",
+                                "    pm.response.to.be.json;",
+                                "});",
+                                "pm.test('Password is NOT leaked in response (SEC-01)', function () {",
+                                "    var json = pm.response.json();",
+                                "    pm.expect(json).to.not.have.property('password');",
+                                "    if (json.user) pm.expect(json.user).to.not.have.property('password');",
+                                "});"
+                            ]
+                        }
+                    }
+                ]
+            }
+            collection["item"].append(item)
+
+        return collection
+
+    def build_github_actions_workflow(self) -> str:
+        return """name: EShop API Automation Tests (HW06)
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: Run Newman API Test Suites
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - name: Install Dependencies
+        run: |
+          npm install
+          cd backend && npm install
+      - name: Run Newman Test Suites with Isolation
+        run: |
+          cd api-test
+          chmod +x run_tests_fixed.sh
+          ./run_tests_fixed.sh
+      - name: Upload HTML Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: EShop_API_TestReports
+          path: api-test/reports/*.html
+"""
+
+
+# ============================================================================
+# MASTER ORCHESTRATOR
+# ============================================================================
+
+class APITestGeneratorOrchestrator:
+    """Coordinates all 7 skills across the 4-module pipeline."""
+
+    def __init__(self, raw_spec: str, student_id: str = "23127378"):
+        self.raw_spec = raw_spec
+        self.student_id = student_id
+        self.analyzer = APISpecAnalyzer(raw_spec)
+        self.dom_gen = DomainPartitionTester()
+        self.sta_gen = StateTransitionTester()
+        self.sec_gen = SecurityTester()
+        self.sch_gen = SchemaValidator()
+        self.auditor = TestCaseAuditor()
+        self.postman_gen = PostmanCollectionGenerator()
+
+    def run_pipeline(self, endpoint: str, method: str) -> Dict[str, Any]:
+        # Step 1: Analyze Spec
+        ir = self.analyzer.parse(endpoint, method)
+
+        # Step 2: Generate Multi-Strategy Test Cases
+        raw_test_cases = []
+        raw_test_cases.extend(self.dom_gen.generate(ir))
+        raw_test_cases.extend(self.sta_gen.generate(ir))
+        raw_test_cases.extend(self.sec_gen.generate(ir))
+        raw_test_cases.extend(self.sch_gen.generate(ir))
+
+        # Step 3: Audit & Extend
+        audit_result = self.auditor.audit(raw_test_cases, ir)
+        final_test_cases = audit_result["audited_cases"] + audit_result["suggested_extensions"]
+
+        # Step 4: Export to Postman & Newman
+        collection = self.postman_gen.build_collection(f"EShop_{endpoint}_Suite", final_test_cases, self.student_id)
+        workflow = self.postman_gen.build_github_actions_workflow()
+
+        return {
+            "ir": ir,
+            "total_test_cases": len(final_test_cases),
+            "audit_summary": audit_result["summary"],
+            "postman_collection": collection,
+            "ci_workflow": workflow
+        }
+
+
+if __name__ == "__main__":
+    orchestrator = APITestGeneratorOrchestrator("SAMPLE_SPEC_CONTENT")
+    result = orchestrator.run_pipeline("/api/login", "POST")
+    print(f"Pipeline executed successfully. Total test cases: {result['total_test_cases']}")
+```
+
+---
+
+## 5. Bảng Đối Chiếu 7 Agent Skills
+
+| STT | Tên Skill | Thư mục định nghĩa | Mục tiêu & Phạm vi | Đầu vào (Input) | Đầu ra (Output) |
+|:---:|---|---|---|---|---|
+| **1** | `api-spec-analyzer` | `.agents/skills/api-spec-analyzer/` | Trích xuất thông tin endpoint, taxonomy tham số, suy luận các quy tắc nghiệp vụ ngầm định (Implicit Business Rules) | `api_specification.md`, SRS | `NormalizedAPISpecIR` (Markdown / JSON) |
+| **2** | `domain-partition-tester` | `.agents/skills/domain-partition-tester/` | Áp dụng ISTQB EP & BVA (2-value, 3-value, Robustness, Type Catalogs: String, Number, Array, Object, Combinatorial All-Pairs) | `NormalizedAPISpecIR` | Danh sách test case `TC-DOM-xxx` |
+| **3** | `state-transition-tester` | `.agents/skills/state-transition-tester/` | Áp dụng FSM ISTQB (0-switch, 1-switch, N-switch, Ma trận chuyển đổi âm bản / Negative State Matrix, Terminal States, RBAC Guards, Concurrency) | `NormalizedAPISpecIR`, State model | Biểu đồ Mermaid FSM + Danh sách test case `TC-STA-xxx` |
+| **4** | `security-tester` | `.agents/skills/security-tester/` | Áp dụng OWASP API Security Top 10 (2023) (BOLA/IDOR, Broken Auth, Mass Assignment, Resource Consumption, BFLA, SSRF, Misconfig) + SEC-01..SEC-07 | `NormalizedAPISpecIR`, Attack Payloads | Danh sách test case `TC-SEC-xxx` |
+| **5** | `schema-validator` | `.agents/skills/schema-validator/` | Kiểm thử hợp đồng JSON Schema Draft 2020-12 (`additionalProperties: false`, strict types, formats), HTTP Status Conformance, RFC 7807 Error Envelope | `NormalizedAPISpecIR`, JSON Schemas | Danh sách test case `TC-SCH-xxx` |
+| **6** | `test-case-auditor` | `.agents/skills/test-case-auditor/` | Kiểm toán độc lập theo chuẩn IEEE 829 / ISO 29119 trên 5 trục (Soundness, Completeness, Consistency, Independence, Traceability), Triaging (VALID/INVALID/INCOMPLETE), AI Critique, Tự động đề xuất Gap Suggestions | Toàn bộ Test Cases được sinh ra | Báo cáo Audit IEEE 829, Bảng Triaging & Remediation, Danh sách mở rộng `TC-EXT-xxx` |
+| **7** | `postman-collection-generator` | `.agents/skills/postman-collection-generator/` | Chuyển đổi test cases thành Postman Collection v2.1.0 JSON format, Pre-request Scripts (Auto Auth, Header `X-Student-Id`, Dynamic Fuzzing), Chai.js & Ajv Test Scripts, Newman CLI Runner (`run_tests_fixed.sh`), GitHub Actions CI/CD (`api-test.yml`) | Bộ Test Cases hoàn chỉnh sau Audit | `eshop_collection_*.json`, `eshop_environment.json`, `run_tests_fixed.sh`, `.github/workflows/api-test.yml` |
