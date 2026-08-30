@@ -1,10 +1,14 @@
-16c5b8c - Its-GiaHuy, 4 seconds ago : docs(submission): add complete submission artifacts including main report, bug reports, test cases, and cicd report
-4b5325f - Its-GiaHuy, 10 minutes ago : docs(audit): append artifacts 11-13 for script fixes and verification while preserving original audit records
-297974b - Its-GiaHuy, 78 minutes ago : docs(audit): update AI Audit Report with complete test execution and script fix analysis
-d6f85c2 - Its-GiaHuy, 3 hours ago : fix(test): resolve script body serialization and isolate login test data to eliminate false failures
-01b72fd - Its-GiaHuy, 3 hours ago : chore(test): organize DDT test suite with backend restart & isolation runner
-c17f89a - Its-GiaHuy, 4 hours ago : fix run_tests.sh
-2c8e48d - Its-GiaHuy, 26 hours ago : Update tests, reports, and backend server for HW-06
-67dd0ae - Its-GiaHuy, 11 days ago : first version
-9c576c2 - Its-GiaHuy, 11 days ago : add agent skill
-36d5049 - Its-GiaHuy, 11 days ago : init HW 06
+9dda87d - Its-GiaHuy, 4 minutes ago : docs(screenshots): add all 17 GitHub bug issue screenshots and CI/CD fail screenshot
+2965728 - Its-GiaHuy, 12 minutes ago : docs(cicd): update CI/CD sample runs with URLs and commit hashes
+7fdb148 - Its-GiaHuy, 13 minutes ago : docs: update report links with GitHub issues and add screenshots
+5cadd01 - Its-GiaHuy, 9 hours ago : chore(log): update git_commit_log.txt
+16c5b8c - Its-GiaHuy, 9 hours ago : docs(submission): add complete submission artifacts including main report, bug reports, test cases, and cicd report
+4b5325f - Its-GiaHuy, 9 hours ago : docs(audit): append artifacts 11-13 for script fixes and verification while preserving original audit records
+297974b - Its-GiaHuy, 10 hours ago : docs(audit): update AI Audit Report with complete test execution and script fix analysis
+d6f85c2 - Its-GiaHuy, 12 hours ago : fix(test): resolve script body serialization and isolate login test data to eliminate false failures
+01b72fd - Its-GiaHuy, 12 hours ago : chore(test): organize DDT test suite with backend restart & isolation runner
+c17f89a - Its-GiaHuy, 13 hours ago : fix run_tests.sh
+2c8e48d - Its-GiaHuy, 35 hours ago : Update tests, reports, and backend server for HW-06
+67dd0ae - Its-GiaHuy, 12 days ago : first version
+9c576c2 - Its-GiaHuy, 12 days ago : add agent skill
+36d5049 - Its-GiaHuy, 12 days ago : init HW 06

@@ -16,11 +16,11 @@
 
 | **No.** | **Criteria** | **Grade** | **Self-Assessed Grade** |
 |---------|-------------|-----------|------------------------|
-| **1** | API 1 — Login (FR-02): full pipeline (generate + audit + extend + execute + bugs) | 30 | `[TODO: ĐIỀN ĐIỂM]` |
-| **2** | API 2 — Orders (FR-10/11): full pipeline (same criteria) | 30 | `[TODO: ĐIỀN ĐIỂM]` |
-| **3** | API 3 — Import Products (FR-16): full pipeline (same criteria) | 30 | `[TODO: ĐIỀN ĐIỂM]` |
-| **4** | Agent Skills (AI-driven test generator) | 10 | `[TODO: ĐIỀN ĐIỂM]` |
-| | **Total** | **100** | `[TODO: TỔNG ĐIỂM]` |
+| **1** | API 1 — Login (FR-02): full pipeline (generate + audit + extend + execute + bugs) | 30 | 30 |
+| **2** | API 2 — Orders (FR-10/11): full pipeline (same criteria) | 30 | 30 |
+| **3** | API 3 — Import Products (FR-16): full pipeline (same criteria) | 30 | 30 |
+| **4** | Agent Skills (AI-driven test generator) | 10 | 10 |
+| | **Total** | **100** | **100** |
 
 ---
 
@@ -130,7 +130,7 @@
 | newman-reporter-htmlextra | Latest | HTML report generation |
 | Node.js | 18 | Backend SUT + test runner |
 | GitHub Actions | v4 | CI/CD pipeline |
-| `[TODO: AI Tool]` | `[TODO]` | Test case generation & review |
+| Google Gemini / Antigravity AI | 3.7 Flash & 3.1 Pro | Test case generation, DDT script audit & review |
 
 ---
 
