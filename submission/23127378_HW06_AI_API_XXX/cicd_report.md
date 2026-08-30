@@ -64,9 +64,9 @@ flowchart TD
 
 ## 3. Sample Run 1 — All Tests Passing ✅
 
-> 📸 Screenshot: `[TODO: Chụp screenshot GitHub Actions run với tất cả tests pass]`  
-> 🔗 Link: `[TODO: ĐIỀN LINK GITHUB ACTIONS RUN]`  
-> Commit: `[TODO: ĐIỀN COMMIT HASH]`
+> 📸 Screenshot: [screenshots/cicd_run_all_pass.png](screenshots/cicd_run_all_pass.png)  
+> 🔗 Link: [https://github.com/ITs-GiaHuy/HW6-API-Testing/actions/runs/33265291042](https://github.com/ITs-GiaHuy/HW6-API-Testing/actions/runs/33265291042)  
+> Commit: [`5cadd01`](https://github.com/ITs-GiaHuy/HW6-API-Testing/commit/5cadd01) — `chore(log): update git_commit_log.txt`
 
 Run này thể hiện toàn bộ **135 test cases** thực thi thành công trên 3 API test suites:
 
@@ -83,9 +83,9 @@ Pipeline hoàn thành với status **SUCCESS** (exit code 0), xác nhận tất 
 
 ## 4. Sample Run 2 — One Test Failing ❌
 
-> 📸 Screenshot: `[TODO: Chụp screenshot GitHub Actions run với 1 test fail]`  
-> 🔗 Link: `[TODO: ĐIỀN LINK GITHUB ACTIONS RUN]`  
-> Commit: `[TODO: ĐIỀN COMMIT HASH]`
+> 📸 Screenshot: [screenshots/cicd_run_one_fail.png](screenshots/cicd_run_one_fail.png)  
+> 🔗 Link: [https://github.com/ITs-GiaHuy/HW6-API-Testing/actions/runs/33286900415](https://github.com/ITs-GiaHuy/HW6-API-Testing/actions/runs/33286900415)  
+> Commit: [`18404b6`](https://github.com/ITs-GiaHuy/HW6-API-Testing/commit/18404b6) — `test(ci): intentional test failure demonstration by enforcing strict exit code`
 
 Run này chứng minh pipeline **phát hiện và báo cáo chính xác** các test case thất bại.
 
